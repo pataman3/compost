@@ -1,0 +1,44 @@
+version: '3.8'
+services:
+  mc-valhelsia-1.18.2-server:
+    container_name: mc-valhelsia-1.18.2-server
+    image: itzg/minecraft-server:latest
+    restart: unless-stopped
+    volumes:
+      - /libraries/games/minecraft/curseforge/valhelsia/1.18.2/data:/data
+      - /libraries/games/minecraft/curseforge/valhelsia/1.18.2/modpacks:/modpacks
+    ports:
+      - ${SERVER_PORT_EXT}:${SERVER_PORT_INT}
+      - ${CRON_PORT_EXT}:${CRON_PORT_INT}
+      - ${DYNMAP_PORT_EXT}:${DYNMAP_PORT_INT}
+    environment:
+      - DEBUG=true
+      - EULA=TRUE
+      - TYPE=CURSEFORGE
+      - VERSION=1.18.2
+      - CF_SERVER_MOD=/modpacks/valhelsia-1.18.2-1.4.2b.zip
+      - CF_BASE_DIR=/data
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.http.routers.valhelsia.entrypoints=web
+      - traefik.http.routers.valhelsia.rule=Host(`${HOST}`)
+      - traefik.http.middlewares.valhelsia-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.valhelsia.middlewares=valhelsia-redirect
+      - traefik.http.routers.valhelsia-secure.entrypoints=websecure
+      - traefik.http.routers.valhelsia-secure.rule=Host(`${HOST}`)
+      - traefik.http.routers.valhelsia-secure.tls=true
+      - traefik.http.routers.valhelsia-secure.tls.certresolver=cloudflare
+      - traefik.http.services.valhelsia-service.loadbalancer.server.port=${DYNMAP_PORT_INT}
+  mc-valhelsia-1.18.2-backup:
+    container_name: mc-valhelsia-1.18.2-backup
+    image: itzg/mc-backup:latest
+    restart: unless-stopped
+    depends_on:
+      - mc-valhelsia-1.18.2-server
+    network_mode: service:mc-valhelsia-1.18.2-server
+    volumes:
+      - /libraries/games/minecraft/curseforge/valhelsia/1.18.2/data:/data:ro
+      - /libraries/games/minecraft/curseforge/valhelsia/1.18.2/backups:/backups
+    environment:
+      - BACKUP_INTERVAL=12h

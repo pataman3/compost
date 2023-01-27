@@ -1,0 +1,42 @@
+version: '3.8'
+services:
+  mc-paper-1.19.3-server:
+    container_name: mc-paper-1.19.3-server
+    image: itzg/minecraft-server:latest
+    restart: unless-stopped
+    volumes:
+      - /libraries/games/minecraft/paper/1.19.3/data:/data
+      - /libraries/games/minecraft/paper/1.19.3/plugins:/plugins
+    ports:
+      - ${SERVER_PORT_EXT}:${SERVER_PORT_INT}
+      - ${CRON_PORT_EXT}:${CRON_PORT_INT}
+      - ${DYNMAP_PORT_EXT}:${DYNMAP_PORT_INT}
+    environment:
+      - DEBUG=true
+      - EULA=TRUE
+      - TYPE=PAPER
+      - VERSION=1.19.3
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.http.routers.paper.entrypoints=web
+      - traefik.http.routers.paper.rule=Host(`${HOST}`)
+      - traefik.http.middlewares.paper-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.paper.middlewares=paper-redirect
+      - traefik.http.routers.paper-secure.entrypoints=websecure
+      - traefik.http.routers.paper-secure.rule=Host(`${HOST}`)
+      - traefik.http.routers.paper-secure.tls=true
+      - traefik.http.routers.paper-secure.tls.certresolver=cloudflare
+      - traefik.http.services.paper-service.loadbalancer.server.port=${DYNMAP_PORT_INT}
+  mc-paper-1.19.3-backup:
+    container_name: mc-paper-1.19.3-backup
+    image: itzg/mc-backup:latest
+    restart: unless-stopped
+    depends_on:
+      - mc-paper-1.19.3-server
+    network_mode: service:mc-paper-1.19.3-server
+    volumes:
+      - /libraries/games/minecraft/paper/1.19.3/data:/data:ro
+      - /libraries/games/minecraft/paper/1.19.3/backups:/backups
+    environment:
+      - BACKUP_INTERVAL=12h

@@ -1,0 +1,51 @@
+version: '3.8'
+services:
+  postgres-joplin:
+    container_name: postgres-joplin
+    image: postgres:13
+    restart: unless-stopped
+    volumes:
+      - /config/postgres-joplin:/var/lib/postgresql/data
+    ports:
+      - ${POSTGRES_PORT_EXT}:${POSTGRES_PORT_INT}
+    environment:
+      - POSTGRES_DB=${POSTGRES_DATABASE}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+  joplin:
+    container_name: joplin
+    image: joplin/server:latest
+    restart: unless-stopped
+    depends_on:
+      - postgres-joplin
+    ports:
+      - ${JOPLIN_PORT_EXT}:${JOPLIN_PORT_INT}
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=US/Eastern
+      - APP_PORT=${JOPLIN_PORT_INT}
+      - APP_BASE_URL=https://${HOST}
+      - DB_CLIENT=pg
+      - POSTGRES_HOST=postgres-joplin
+      - POSTGRES_PORT=${POSTGRES_PORT_INT}
+      - POSTGRES_DATABASE=${POSTGRES_DATABASE}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - MAX_TIME_DRIFT=0
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.http.routers.joplin.entrypoints=web
+      - traefik.http.routers.joplin.rule=Host(`${HOST}`)
+      - traefik.http.middlewares.joplin-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.joplin.middlewares=joplin-redirect
+      - traefik.http.routers.joplin-secure.entrypoints=websecure
+      - traefik.http.routers.joplin-secure.rule=Host(`${HOST}`)
+      - traefik.http.routers.joplin-secure.tls=true
+      - traefik.http.services.joplin-service.loadbalancer.server.port=${JOPLIN_PORT_INT}
+      # flame labels
+      - flame.type=app
+      - flame.name=joplin
+      - flame.url=https://${HOST}/
+      - flame.icon=note

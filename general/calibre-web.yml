@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  calibre-web:
+    container_name: calibre-web
+    image: lscr.io/linuxserver/calibre-web:latest
+    restart: unless-stopped
+    volumes:
+      - /config/calibre-web:/config
+      - /libraries/books:/books
+    ports:
+      - ${PORT_EXT}:${PORT_INT}
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=US/Eastern
+      - DOCKER_MODS=linuxserver/mods:universal-calibre
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.http.routers.calibre-web.entrypoints=web
+      - traefik.http.routers.calibre-web.rule=Host(`${HOST}`)
+      - traefik.http.middlewares.calibre-web-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.calibre-web.middlewares=calibre-web-redirect
+      - traefik.http.routers.calibre-web-secure.entrypoints=websecure
+      - traefik.http.routers.calibre-web-secure.rule=Host(`${HOST}`)
+      - traefik.http.routers.calibre-web-secure.tls=true
+      - traefik.http.services.calibre-web-service.loadbalancer.server.port=${PORT_INT}
+      # flame labels
+      - flame.type=app
+      - flame.name=calibre web
+      - flame.url=https://${HOST}/
+      - flame.icon=book

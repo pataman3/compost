@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+  uptime-kuma:
+    container_name: uptime-kuma
+    image: louislam/uptime-kuma:latest
+    restart: unless-stopped
+    volumes:
+      - /config/uptime-kuma:/app/data
+    ports:
+      - ${PORT_EXT}:${PORT_INT}
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.docker.network=traefik
+      - traefik.http.routers.uptime-kuma.entrypoints=web
+      - traefik.http.routers.uptime-kuma.rule=Host(`${HOST}`)
+      - traefik.http.middlewares.uptime-kuma-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.uptime-kuma.middlewares=uptime-kuma-redirect
+      - traefik.http.routers.uptime-kuma-secure.entrypoints=websecure
+      - traefik.http.routers.uptime-kuma-secure.rule=Host(`${HOST}`)
+      - traefik.http.routers.uptime-kuma-secure.tls=true
+      - traefik.http.services.uptime-kuma-service.loadbalancer.server.port=${PORT_INT}
+      # flame labels
+      - flame.type=app
+      - flame.name=uptime kuma
+      - flame.url=https://${HOST}/
+      - flame.icon=arrow-up-bold

@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+  flame:
+    container_name: flame
+    image: pawelmalak/flame
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /config/flame:/app/data
+    ports:
+      - ${PORT_EXT}:${PORT_INT}
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=US/Eastern
+      - PASSWORD=${PASSWORD}
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.http.routers.flame.entrypoints=web
+      - traefik.http.routers.flame.rule=Host(`${HOST}`)
+      - traefik.http.middlewares.flame-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.flame.middlewares=flame-redirect
+      - traefik.http.routers.flame-secure.entrypoints=websecure
+      - traefik.http.routers.flame-secure.rule=Host(`${HOST}`)
+      - traefik.http.routers.flame-secure.tls=true
+      - traefik.http.services.flame-service.loadbalancer.server.port=${PORT_INT}

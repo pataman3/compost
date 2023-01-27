@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+  filebrowser:
+    container_name: filebrowser
+    image: filebrowser/filebrowser:latest
+    restart: unless-stopped
+    volumes:
+      - /config/filebrowser/filebrowser.db:/database.db
+      - /libraries:/srv
+    ports:
+      - ${PORT_EXT}:${PORT_INT}
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=US/Eastern
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.http.routers.filebrowser.entrypoints=web
+      - traefik.http.routers.filebrowser.rule=Host(`${HOST}`)
+      - traefik.http.middlewares.filebrowser-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.filebrowser.middlewares=filebrowser-redirect
+      - traefik.http.routers.filebrowser-secure.entrypoints=websecure
+      - traefik.http.routers.filebrowser-secure.rule=Host(`${HOST}`)
+      - traefik.http.routers.filebrowser-secure.tls=true
+      - traefik.http.services.filebrowser-service.loadbalancer.server.port=${PORT_INT}
+      # flame labels
+      - flame.type=app
+      - flame.name=file browser
+      - flame.url=https://${HOST}/
+      - flame.icon=folder

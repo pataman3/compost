@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  portainer:
+    container_name: portainer
+    image: portainer/portainer-ce:latest
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /config/portainer:/data
+    ports:
+      - ${PORT_1_EXT}:${PORT_1_INT}
+      - ${PORT_2_EXT}:${PORT_2_INT}
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.http.routers.portainer.entrypoints=web
+      - traefik.http.routers.portainer.rule=Host(`${HOST}`)
+      - traefik.http.middlewares.portainer-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.portainer.middlewares=portainer-redirect
+      - traefik.http.routers.portainer-secure.entrypoints=websecure
+      - traefik.http.routers.portainer-secure.rule=Host(`${HOST}`)
+      - traefik.http.routers.portainer-secure.tls=true
+      - traefik.http.services.portainer-service.loadbalancer.server.port=${PORT_2_INT}
+      # flame labels
+      - flame.type=app
+      - flame.name=portainer
+      - flame.url=https://${HOST}/
+      - flame.icon=airport

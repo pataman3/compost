@@ -1,0 +1,243 @@
+version: '3.8'
+services:
+  vpn:
+    container_name: vpn
+    image: qmcgaw/gluetun:latest
+    restart: unless-stopped
+    ports:
+      # bazarr ports
+      - ${BAZARR_PORT_EXT}:${BAZARR_PORT_INT}
+      # lidarr ports
+      - ${LIDARR_PORT_EXT}:${LIDARR_PORT_INT}
+      # prowlarr ports
+      - ${PROWLARR_PORT_EXT}:${PROWLARR_PORT_INT}
+      # qbittorrent ports
+      - ${QBITTORRENT_PORT_EXT}:${QBITTORRENT_PORT_INT}
+      - ${QBITTORRENT_PORT_2_EXT}:${QBITTORRENT_PORT_2_INT}
+      - ${QBITTORRENT_PORT_2_EXT}:${QBITTORRENT_PORT_2_INT}/udp
+      # radarr ports
+      - ${RADARR_PORT_EXT}:${RADARR_PORT_INT}
+      # readarr ports
+      - ${READARR_PORT_EXT}:${READARR_PORT_INT} 
+      # sonarr ports
+      - ${SONARR_PORT_EXT}:${SONARR_PORT_INT}
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    environment:
+      - SERVER_CITIES=${SERVER_CITIES}
+      - VPN_SERVICE_PROVIDER=${VPN_SERVICE_PROVIDER}
+      - VPN_TYPE=${VPN_TYPE}
+      - WIREGUARD_ADDRESSES=${WIREGUARD_ADDRESSES}
+      - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
+  bazarr:
+    container_name: bazarr
+    image: lscr.io/linuxserver/bazarr:latest
+    restart: unless-stopped
+    depends_on:
+      - vpn
+    network_mode: service:vpn
+    volumes:
+      - /config/bazarr:/config
+      - /libraries:/libraries
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.http.routers.bazarr.entrypoints=web
+      - traefik.http.routers.bazarr.rule=Host(`${BAZARR_HOST}`)
+      - traefik.http.middlewares.bazarr-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.bazarr.middlewares=bazarr-redirect
+      - traefik.http.routers.bazarr-secure.entrypoints=websecure
+      - traefik.http.routers.bazarr-secure.rule=Host(`${BAZARR_HOST}`)
+      - traefik.http.routers.bazarr-secure.tls=true
+      - traefik.http.services.bazarr-service.loadbalancer.server.port=${BAZARR_PORT_INT}
+      # flame labels
+      - flame.type=app
+      - flame.name=bazarr
+      - flame.url=https://${BAZARR_HOST}/
+      - flame.icon=subtitles
+  lidarr:
+    container_name: lidarr
+    image: lscr.io/linuxserver/lidarr:latest
+    restart: unless-stopped
+    depends_on:
+      - vpn
+    network_mode: service:vpn
+    volumes:
+      - /config/lidarr:/config
+      - /libraries:/libraries
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.http.routers.lidarr.entrypoints=web
+      - traefik.http.routers.lidarr.rule=Host(`${LIDARR_HOST}`)
+      - traefik.http.middlewares.lidarr-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.lidarr.middlewares=lidarr-redirect
+      - traefik.http.routers.lidarr-secure.entrypoints=websecure
+      - traefik.http.routers.lidarr-secure.rule=Host(`${LIDARR_HOST}`)
+      - traefik.http.routers.lidarr-secure.tls=true
+      - traefik.http.services.lidarr-service.loadbalancer.server.port=${LIDARR_PORT_INT}
+      # flame labels
+      - flame.type=app
+      - flame.name=lidarr
+      - flame.url=https://${LIDARR_HOST}/
+      - flame.icon=music
+  prowlarr:
+    container_name: prowlarr
+    image: lscr.io/linuxserver/prowlarr:latest
+    restart: unless-stopped
+    depends_on:
+      - vpn
+    network_mode: service:vpn
+    volumes:
+      - /config/prowlarr:/config
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.http.routers.prowlarr.entrypoints=web
+      - traefik.http.routers.prowlarr.rule=Host(`${PROWLARR_HOST}`)
+      - traefik.http.middlewares.prowlarr-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.prowlarr.middlewares=prowlarr-redirect
+      - traefik.http.routers.prowlarr-secure.entrypoints=websecure
+      - traefik.http.routers.prowlarr-secure.rule=Host(`${PROWLARR_HOST}`)
+      - traefik.http.routers.prowlarr-secure.tls=true
+      - traefik.http.services.prowlarr-service.loadbalancer.server.port=${PROWLARR_PORT_INT}
+      # flame labels
+      - flame.type=app
+      - flame.name=prowlarr
+      - flame.url=https://${PROWLARR_HOST}/
+      - flame.icon=file-find
+  qbittorrent:
+    container_name: qbittorrent
+    image: lscr.io/linuxserver/qbittorrent:latest
+    restart: unless-stopped
+    depends_on:
+      - vpn
+    network_mode: service:vpn
+    volumes:
+      - /config/qbittorrent:/config
+      - /libraries/downloads:/downloads
+    environment:
+      - PGID=1000
+      - PUID=1000
+      - TZ=${TZ}
+      - WEBUI_PORT=${QBITTORRENT_PORT_INT}
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.http.routers.qbittorrent.entrypoints=web
+      - traefik.http.routers.qbittorrent.rule=Host(`${QBITTORRENT_HOST}`)
+      - traefik.http.middlewares.qbittorrent-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.qbittorrent.middlewares=qbittorrent-redirect
+      - traefik.http.routers.qbittorrent-secure.entrypoints=websecure
+      - traefik.http.routers.qbittorrent-secure.rule=Host(`${QBITTORRENT_HOST}`)
+      - traefik.http.routers.qbittorrent-secure.tls=true
+      - traefik.http.services.qbittorrent-service.loadbalancer.server.port=${QBITTORRENT_PORT_INT}
+      # flame labels
+      - flame.type=app
+      - flame.name=qbittorrent
+      - flame.url=https://${QBITTORRENT_HOST}/
+      - flame.icon=download
+  radarr:
+    container_name: radarr
+    image: lscr.io/linuxserver/radarr:latest
+    restart: unless-stopped
+    depends_on:
+      - vpn
+    network_mode: service:vpn
+    volumes:
+      - /config/radarr:/config
+      - /libraries:/libraries
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.http.routers.radarr.entrypoints=web
+      - traefik.http.routers.radarr.rule=Host(`${RADARR_HOST}`)
+      - traefik.http.middlewares.radarr-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.radarr.middlewares=radarr-redirect
+      - traefik.http.routers.radarr-secure.entrypoints=websecure
+      - traefik.http.routers.radarr-secure.rule=Host(`${RADARR_HOST}`)
+      - traefik.http.routers.radarr-secure.tls=true
+      - traefik.http.services.radarr-service.loadbalancer.server.port=${RADARR_PORT_INT}
+      # flame labels
+      - flame.type=app
+      - flame.name=radarr
+      - flame.url=https://${RADARR_HOST}/
+      - flame.icon=movie
+  readarr:
+    container_name: readarr
+    image: lscr.io/linuxserver/readarr:develop
+    restart: unless-stopped
+    depends_on:
+      - vpn
+    network_mode: service:vpn
+    volumes:
+      - /config/readarr:/config
+      - /libraries:/libraries
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.http.routers.readarr.entrypoints=web
+      - traefik.http.routers.readarr.rule=Host(`${READARR_HOST}`)
+      - traefik.http.middlewares.readarr-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.readarr.middlewares=readarr-redirect
+      - traefik.http.routers.readarr-secure.entrypoints=websecure
+      - traefik.http.routers.readarr-secure.rule=Host(`${READARR_HOST}`)
+      - traefik.http.routers.readarr-secure.tls=true
+      - traefik.http.services.readarr-service.loadbalancer.server.port=${READARR_PORT_INT}
+      # flame labels
+      - flame.type=app
+      - flame.name=readarr
+      - flame.url=https://${READARR_HOST}/
+      - flame.icon=book-open-page-variant
+  sonarr:
+    container_name: sonarr
+    image: lscr.io/linuxserver/sonarr:latest
+    restart: unless-stopped
+    depends_on:
+      - vpn
+    network_mode: service:vpn
+    volumes:
+      - /config/sonarr:/config
+      - /libraries:/libraries
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.http.routers.sonarr.entrypoints=web
+      - traefik.http.routers.sonarr.rule=Host(`${SONARR_HOST}`)
+      - traefik.http.middlewares.sonarr-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.sonarr.middlewares=sonarr-redirect
+      - traefik.http.routers.sonarr-secure.entrypoints=websecure
+      - traefik.http.routers.sonarr-secure.rule=Host(`${SONARR_HOST}`)
+      - traefik.http.routers.sonarr-secure.tls=true
+      - traefik.http.services.sonarr-service.loadbalancer.server.port=${SONARR_PORT_INT}
+      # flame labels
+      - flame.type=app
+      - flame.name=sonarr
+      - flame.url=https://${SONARR_HOST}/
+      - flame.icon=television-classic

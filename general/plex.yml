@@ -1,0 +1,50 @@
+version: '3.8'
+services:
+  plex:
+    container_name: plex
+    image: lscr.io/linuxserver/plex:latest
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    volumes:
+      - /config/plex:/config
+      - /libraries:/libraries
+      - /libraries/temp/plex/transcode:/transcode
+      - /libraries/temp/plex/tmp:/tmp
+    ports:
+      - ${IP}:${PORT_1_EXT}:${PORT_1_INT}
+      - ${PORT_2_EXT}:${PORT_2_INT}/udp
+      - ${PORT_3_EXT}:${PORT_3_INT}
+      - ${PORT_4_EXT}:${PORT_4_INT}
+      - ${PORT_5_EXT}:${PORT_5_INT}/udp
+      - ${PORT_6_EXT}:${PORT_6_INT}/udp
+      - ${PORT_7_EXT}:${PORT_7_INT}/udp
+      - ${PORT_8_EXT}:${PORT_8_INT}/udp
+      - ${PORT_9_EXT}:${PORT_9_INT}
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - ADVERTISE_IP=https://${HOST}/
+      - PLEX_CLAIM=${PLEX_CLAIM}
+      - VERSION=docker
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,video,utility
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.http.routers.plex.entrypoints=web
+      - traefik.http.routers.plex.rule=Host(`${HOST}`)
+      - traefik.http.middlewares.plex-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.plex.middlewares=plex-redirect
+      - traefik.http.routers.plex-secure.entrypoints=websecure
+      - traefik.http.routers.plex-secure.rule=Host(`${HOST}`)
+      - traefik.http.routers.plex-secure.tls=true
+      - traefik.http.services.plex-service.loadbalancer.server.port=${PORT_1_INT}
+      # flame labels
+      - flame.type=app
+      - flame.name=plex
+      - flame.url=https://${HOST}/
+      - flame.icon=disc-player

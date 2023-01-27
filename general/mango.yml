@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  mango:
+    container_name: mango
+    image: hkalexling/mango:latest
+    restart: unless-stopped
+    volumes:
+      - /config/mango:/root/.config/mango
+      - /libraries/manga:/root/mango
+    ports:
+      - ${PORT_EXT}:${PORT_INT}
+    environment:
+      - PORT=${PORT_INT}
+      - PUID=1000
+      - PGID=1000
+      - TZ=US/Eastern
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.http.routers.mango.entrypoints=web
+      - traefik.http.routers.mango.rule=Host(`${HOST}`)
+      - traefik.http.middlewares.mango-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.mango.middlewares=mango-redirect
+      - traefik.http.routers.mango-secure.entrypoints=websecure
+      - traefik.http.routers.mango-secure.rule=Host(`${HOST}`)
+      - traefik.http.routers.mango-secure.tls=true
+      - traefik.http.services.mango-service.loadbalancer.server.port=${PORT_INT}
+      # flame labels
+      - flame.type=app
+      - flame.name=mango
+      - flame.url=https://${HOST}/
+      - flame.icon=thought-bubble

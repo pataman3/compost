@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+  code-server:
+    container_name: code-server
+    image: lscr.io/linuxserver/code-server:latest
+    restart: unless-stopped
+    volumes:
+      - /config/code-server:/config
+    ports:
+      - ${PORT_EXT}:${PORT_INT}
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=US/Eastern
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.http.routers.code-server.entrypoints=web
+      - traefik.http.routers.code-server.rule=Host(`${HOST}`)
+      - traefik.http.middlewares.code-server-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.code-server.middlewares=code-server-redirect
+      - traefik.http.routers.code-server-secure.entrypoints=websecure
+      - traefik.http.routers.code-server-secure.rule=Host(`${HOST}`)
+      - traefik.http.routers.code-server-secure.tls=true
+      - traefik.http.services.code-server-service.loadbalancer.server.port=${PORT_INT}
+      # flame labels
+      - flame.type=app
+      - flame.name=code server
+      - flame.url=https://${HOST}/
+      - flame.icon=microsoft-visual-studio-code

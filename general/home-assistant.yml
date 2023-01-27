@@ -12,8 +12,6 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=US/Eastern
-    # privileged: true        recommended but not using
-    # network_mode: host        recommended but not using
     labels:
       # traefik labels
       - traefik.enable=true
@@ -27,6 +25,6 @@ services:
       - traefik.http.services.home-assistant-service.loadbalancer.server.port=${PORT_1_INT}
       # flame labels
       - flame.type=app
-      - flame.name=home-assistant
+      - flame.name=home assistant
       - flame.url=https://${HOST}/
       - flame.icon=home-assistant

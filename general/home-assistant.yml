@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  home-assistant:
+    container_name: home-assistant
+    image: ghcr.io/home-assistant/home-assistant:stable
+    restart: unless-stopped
+    volumes:
+      - /config/home-assistant:/config
+    ports:
+      - ${PORT_1_EXT}:${PORT_1_INT}
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=US/Eastern
+    # privileged: true        recommended but not using
+    # network_mode: host        recommended but not using
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.http.routers.home-assistant.entrypoints=web
+      - traefik.http.routers.home-assistant.rule=Host(`${HOST}`)
+      - traefik.http.middlewares.home-assistant-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.home-assistant.middlewares=home-assistant-redirect
+      - traefik.http.routers.home-assistant-secure.entrypoints=websecure
+      - traefik.http.routers.home-assistant-secure.rule=Host(`${HOST}`)
+      - traefik.http.routers.home-assistant-secure.tls=true
+      - traefik.http.services.home-assistant-service.loadbalancer.server.port=${PORT_1_INT}
+      # flame labels
+      - flame.type=app
+      - flame.name=home-assistant
+      - flame.url=https://${HOST}/
+      - flame.icon=home-assistant

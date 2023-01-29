@@ -6,7 +6,7 @@ services:
     restart: unless-stopped
     volumes:
       - /config/calibre-web:/config
-      - /libraries/books:/books
+      - /libraries/media/books:/books
     ports:
       - ${PORT_EXT}:${PORT_INT}
     environment:

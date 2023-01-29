@@ -6,7 +6,7 @@ services:
     restart: unless-stopped
     volumes:
       - /config/mango:/root/.config/mango
-      - /libraries/manga:/root/mango
+      - /libraries/media/manga:/root/mango
     ports:
       - ${PORT_EXT}:${PORT_INT}
     environment:

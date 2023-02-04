@@ -9,6 +9,8 @@ services:
       - ${BAZARR_PORT_EXT}:${BAZARR_PORT_INT}
       # lidarr ports
       - ${LIDARR_PORT_EXT}:${LIDARR_PORT_INT}
+      # nzbget ports
+      - ${NZBGET_PORT_EXT}:${NZBGET_PORT_INT}
       # prowlarr ports
       - ${PROWLARR_PORT_EXT}:${PROWLARR_PORT_INT}
       # qbittorrent ports
@@ -91,6 +93,36 @@ services:
       - flame.name=lidarr
       - flame.url=https://${LIDARR_HOST}/
       - flame.icon=music
+  nzbget:
+    container_name: nzbget
+    image: lscr.io/linuxserver/nzbget:latest
+    restart: unless-stopped
+    depends_on:
+      - vpn
+    network_mode: service:vpn
+    volumes:
+      - /config/nzbget:/config
+      - /libraries/downloads:/downloads
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.http.routers.nzbget.entrypoints=web
+      - traefik.http.routers.nzbget.rule=Host(`${NZBGET_HOST}`)
+      - traefik.http.middlewares.nzbget-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.nzbget.middlewares=nzbget-redirect
+      - traefik.http.routers.nzbget-secure.entrypoints=websecure
+      - traefik.http.routers.nzbget-secure.rule=Host(`${NZBGET_HOST}`)
+      - traefik.http.routers.nzbget-secure.tls=true
+      - traefik.http.services.nzbget-service.loadbalancer.server.port=${NZBGET_PORT_INT}
+      # flame labels
+      - flame.type=app
+      - flame.name=nzbget
+      - flame.url=https://${NZBGET_HOST}/
+      - flame.icon=target
   prowlarr:
     container_name: prowlarr
     image: lscr.io/linuxserver/prowlarr:latest

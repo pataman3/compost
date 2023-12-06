@@ -3,6 +3,7 @@ services:
   postgres-joplin:
     container_name: postgres-joplin
     image: postgres:13
+    pull_policy: always
     restart: unless-stopped
     volumes:
       - /config/postgres-joplin:/var/lib/postgresql/data
@@ -15,6 +16,7 @@ services:
   joplin:
     container_name: joplin
     image: joplin/server:latest
+    pull_policy: always
     restart: unless-stopped
     depends_on:
       - postgres-joplin

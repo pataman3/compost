@@ -3,6 +3,7 @@ services:
   uptime-kuma:
     container_name: uptime-kuma
     image: louislam/uptime-kuma:latest
+    pull_policy: always
     restart: unless-stopped
     volumes:
       - /config/uptime-kuma:/app/data

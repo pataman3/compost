@@ -3,6 +3,7 @@ services:
   home-assistant:
     container_name: home-assistant
     image: ghcr.io/home-assistant/home-assistant:stable
+    pull_policy: always
     restart: unless-stopped
     volumes:
       - /config/home-assistant:/config

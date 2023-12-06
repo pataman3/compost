@@ -3,6 +3,7 @@ services:
   code-server:
     container_name: code-server
     image: lscr.io/linuxserver/code-server:latest
+    pull_policy: always
     restart: unless-stopped
     volumes:
       - /config/code-server:/config

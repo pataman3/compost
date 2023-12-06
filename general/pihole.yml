@@ -3,6 +3,7 @@ services:
   pihole:
     container_name: pihole
     image: pihole/pihole:latest
+    pull_policy: always
     restart: unless-stopped
     volumes:
       - /config/pihole:/etc/pihole
@@ -40,6 +41,7 @@ services:
   unbound:
     container_name: unbound
     image: mvance/unbound:latest
+    pull_policy: always
     restart: unless-stopped
     ports:
       - ${UNBOUND_PORT_EXT}:${UNBOUND_PORT_INT}

@@ -3,6 +3,7 @@ services:
   redis-paperless:
     container_name: redis-paperless
     image: redis:7
+    pull_policy: always
     restart: unless-stopped
     volumes:
       - /config/redis-paperless:/data
@@ -12,6 +13,7 @@ services:
   postgres-paperless:
     container_name: postgres-paperless
     image: postgres:13
+    pull_policy: always
     restart: unless-stopped
     volumes:
       - /config/postgres-paperless:/var/lib/postgresql/data
@@ -24,6 +26,7 @@ services:
   paperless:
     container_name: paperless
     image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    pull_policy: always
     restart: unless-stopped
     depends_on:
       - postgres-paperless

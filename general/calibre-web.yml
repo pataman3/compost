@@ -3,6 +3,7 @@ services:
   calibre-web:
     container_name: calibre-web
     image: lscr.io/linuxserver/calibre-web:latest
+    pull_policy: always
     restart: unless-stopped
     volumes:
       - /config/calibre-web:/config

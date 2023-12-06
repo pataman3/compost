@@ -3,6 +3,7 @@ services:
   mango:
     container_name: mango
     image: hkalexling/mango:latest
+    pull_policy: always
     restart: unless-stopped
     volumes:
       - /config/mango:/root/.config/mango

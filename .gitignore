@@ -1,4 +1,12 @@
-_working
+# stack folders
 /games/*/
 /general/*/
-.*
+
+# stack envvar files
+.env.*
+
+# working directory
+.working
+
+# script artifacts
+.scripts/manifest.json

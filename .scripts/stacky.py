@@ -27,25 +27,26 @@ def build_manifest():
     global compost
     re_is_service_line = re.compile(r"  [a-z0-9-.]+:\n")
     re_is_service = re.compile(r"[a-z0-9-.]+")
-    directories = os.listdir(os.path.join(os.getcwd(), os.pardir))
-    for directory in directories:
-        if re.match(r"^[^.].+", directory):
-            compost[directory] = {}
-            files = os.listdir(os.path.join(os.getcwd(), os.pardir, directory))
-            for file in files:
-                if re.match(r"^[^.].*\.yml$", file):
-                    fp = os.path.abspath(
-                        os.path.join(os.getcwd(), os.pardir, directory, file)
+    category_directories = os.listdir(os.path.join(os.getcwd(), os.pardir))
+    for category_directory in category_directories:
+        if re.match(r"^[^.].+", category_directory):
+            compost[category_directory] = {}
+            stack_files = os.listdir(os.path.join(os.getcwd(), os.pardir, category_directory))
+            for stack_file in stack_files:
+                if re.match(r"^[^.].*\.yml$", stack_file):
+                    file_path = os.path.abspath(
+                        os.path.join(os.getcwd(), os.pardir, category_directory, stack_file)
                     )
                     services = []
-                    with open(fp, "r") as f:
-                        for line in f:
-                            if re_is_service_line.fullmatch(line) and line != '  compost-bin:\n':
+                    with open(file_path, "r") as file:
+                        lines = file.readlines()
+                        for line in lines[:-3]:
+                            if re_is_service_line.fullmatch(line):
                                 services.append(re_is_service.search(line).group(0))
-                    compost[directory][file[:-4]] = services
+                    compost[category_directory][stack_file[:-4]] = services
     manifest = "manifest.json"
-    with open(manifest, "w") as f:
-        json.dump(compost, f)
+    with open(manifest, "w") as file:
+        json.dump(compost, file)
 
 
 # sn : stack name

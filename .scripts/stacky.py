@@ -62,10 +62,10 @@ def retrieve_stack_category(sn):
 
 # sn : stack name
 # cn : category name
-def stack_deploy(sn, cn):
+def stack_start(sn, cn):
     path_yaml = os.path.abspath(os.path.join(os.getcwd(), os.pardir, cn, sn + ".yml"))
     path_env = os.path.abspath(os.path.join(os.getcwd(), os.pardir, cn, ".env." + sn))
-    command_deploy = " ".join(
+    command_start = " ".join(
         [
             "sudo docker compose --file",
             path_yaml,
@@ -74,28 +74,28 @@ def stack_deploy(sn, cn):
             "up --detach --force-recreate",
         ]
     )
-    print("running command `", command_deploy, "`")
-    os.system(command_deploy)
+    print("running command `", command_start, "`")
+    os.system(command_start)
 
 
 # l : list
 # pn : parent
 # t : type : e.g. all, category
-def list_deploy(l, pn, t):
+def list_start(l, pn, t):
     if t == "all":
         for category in list(l.keys()):
-            list_deploy(l[category], category, "category")
+            list_start(l[category], category, "category")
     elif t == "category":
         for stack in list(l.keys()):
-            stack_deploy(stack, pn)
+            stack_start(stack, pn)
 
 
 # s : stack
 def stack_stop(s):
     services = s.copy()
     services.reverse()
-    command_stop = "sudo docker stop" + " ".join(services)
-    command_rm = "sudo docker rm" + " ".join(services)
+    command_stop = "sudo docker stop " + " ".join(services)
+    command_rm = "sudo docker rm " + " ".join(services)
     print("running command `", command_stop, "`")
     os.system(command_stop)
     print("running command `", command_rm, "`")
@@ -191,7 +191,7 @@ def main():
         print_list_msg(compost, None, "all", "service", "stop")
         list_stop(compost, "all")
         print_list_msg(compost, None, "all", "service", "start")
-        list_deploy(compost, None, "all")
+        list_start(compost, None, "all")
 
     if args.category:
         _categories = [i for i in list(compost.keys())]
@@ -211,7 +211,7 @@ def main():
                 "service",
                 "start",
             )
-            list_deploy(compost[args.category[0]], args.category[0], "category")
+            list_start(compost[args.category[0]], args.category[0], "category")
         else:
             print("invalid category")
             print_list_msg(compost, None, "all", "category", "exists")
@@ -234,7 +234,7 @@ def main():
                 "service",
                 "start",
             )
-            stack_deploy(args.stack[0], retrieve_stack_category(args.stack[0]))
+            stack_start(args.stack[0], retrieve_stack_category(args.stack[0]))
         else:
             print("invalid stack")
             print_list_msg(compost, None, "all", "stack", "exists")

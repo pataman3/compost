@@ -8,6 +8,8 @@ services:
     volumes:
       - /config/pihole:/etc/pihole
       - /config/pihole/dnsmasq.d:/etc/dnsmasq.d
+    networks:
+      - compost-bin
     ports:
       - ${IP}:${PIHOLE_PORT_1_EXT}:${PIHOLE_PORT_1_INT}
       - ${IP}:${PIHOLE_PORT_1_EXT}:${PIHOLE_PORT_1_INT}/udp
@@ -43,6 +45,11 @@ services:
     image: mvance/unbound:latest
     pull_policy: always
     restart: unless-stopped
+    networks:
+      - compost-bin
     ports:
       - ${UNBOUND_PORT_EXT}:${UNBOUND_PORT_INT}
       - ${UNBOUND_PORT_EXT}:${UNBOUND_PORT_INT}/udp
+networks:
+  compost-bin:
+    external: true

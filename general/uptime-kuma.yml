@@ -7,6 +7,8 @@ services:
     restart: unless-stopped
     volumes:
       - /config/uptime-kuma:/app/data
+    networks:
+      - compost-bin
     ports:
       - ${PORT_EXT}:${PORT_INT}
     labels:
@@ -26,3 +28,6 @@ services:
       - flame.name=uptime kuma
       - flame.url=https://${HOST}/
       - flame.icon=arrow-up-bold
+networks:
+  compost-bin:
+    external: true

@@ -5,11 +5,11 @@ services:
     image: traefik:latest
     pull_policy: always
     restart: unless-stopped
-    networks:
-      - compost-bin
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /config/traefik:/letsencrypt
+    networks:
+      - compost-bin
     ports:
       - ${PORT_1_EXT}:${PORT_1_INT}
       - ${PORT_2_EXT}:${PORT_2_INT}

@@ -8,6 +8,8 @@ services:
     volumes:
       - /config/mango:/root/.config/mango
       - /libraries/media/manga:/root/mango
+    networks:
+      - compost-bin
     ports:
       - ${PORT_EXT}:${PORT_INT}
     environment:
@@ -31,3 +33,6 @@ services:
       - flame.name=mango
       - flame.url=https://${HOST}/
       - flame.icon=thought-bubble
+networks:
+  compost-bin:
+    external: true

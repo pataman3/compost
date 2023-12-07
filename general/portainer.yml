@@ -8,6 +8,8 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /config/portainer:/data
+    networks:
+      - compost-bin
     ports:
       - ${PORT_1_EXT}:${PORT_1_INT}
       - ${PORT_2_EXT}:${PORT_2_INT}
@@ -27,3 +29,6 @@ services:
       - flame.name=portainer
       - flame.url=https://${HOST}/
       - flame.icon=airport
+networks:
+  compost-bin:
+    external: true

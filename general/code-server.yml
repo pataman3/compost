@@ -7,6 +7,8 @@ services:
     restart: unless-stopped
     volumes:
       - /config/code-server:/config
+    networks:
+      - compost-bin
     ports:
       - ${PORT_EXT}:${PORT_INT}
     environment:
@@ -29,3 +31,6 @@ services:
       - flame.name=code server
       - flame.url=https://${HOST}/
       - flame.icon=microsoft-visual-studio-code
+networks:
+  compost-bin:
+    external: true

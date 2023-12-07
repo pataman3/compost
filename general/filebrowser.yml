@@ -8,6 +8,8 @@ services:
     volumes:
       - /config/filebrowser/filebrowser.db:/database.db
       - /libraries:/srv
+    networks:
+      - compost-bin
     ports:
       - ${PORT_EXT}:${PORT_INT}
     environment:
@@ -30,3 +32,6 @@ services:
       - flame.name=file browser
       - flame.url=https://${HOST}/
       - flame.icon=folder
+networks:
+  compost-bin:
+    external: true

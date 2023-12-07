@@ -7,6 +7,8 @@ services:
     restart: unless-stopped
     volumes:
       - /config/redis-paperless:/data
+    networks:
+      - compost-bin
     ports:
       - ${REDIS_PORT_EXT}:${REDIS_PORT_INT}
     command: --save 60 1 --loglevel warning
@@ -17,6 +19,8 @@ services:
     restart: unless-stopped
     volumes:
       - /config/postgres-paperless:/var/lib/postgresql/data
+    networks:
+      - compost-bin
     ports:
       - ${POSTGRES_PORT_EXT}:${POSTGRES_PORT_INT}
     environment:
@@ -36,6 +40,8 @@ services:
       - /libraries/documents:/usr/src/paperless/media
       - ./export:/usr/src/paperless/export
       - ./consume:/usr/src/paperless/consume
+    networks:
+      - compost-bin
     ports:
       - ${PAPERLESS_PORT_EXT}:${PAPERLESS_PORT_INT}
     environment:
@@ -65,3 +71,6 @@ services:
       - flame.name=paperless
       - flame.url=https://${HOST}/
       - flame.icon=leaf
+networks:
+  compost-bin:
+    external: true

@@ -28,3 +28,6 @@ services:
       - traefik.http.routers.flame-secure.rule=Host(`${HOST}`)
       - traefik.http.routers.flame-secure.tls=true
       - traefik.http.services.flame-service.loadbalancer.server.port=${PORT_INT}
+networks:
+  compost-bin:
+    external: true

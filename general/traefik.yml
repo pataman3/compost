@@ -51,3 +51,6 @@ services:
       - flame.name=traefik
       - flame.url=https://${HOST}/
       - flame.icon=traffic-light
+networks:
+  compost-bin:
+    external: true

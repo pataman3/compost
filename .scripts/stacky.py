@@ -39,7 +39,7 @@ def build_manifest():
                     )
                     services = []
                     with open(fp, "r") as f:
-                        for line in f:
+                        for line in f[:-3]:
                             if re_is_service_line.fullmatch(line):
                                 services.append(re_is_service.search(line).group(0))
                     compost[directory][file[:-4]] = services
@@ -213,21 +213,21 @@ def main():
         _stacks = [j for i in list(compost.keys()) for j in list(compost[i].keys())]
         if args.stack[0] in _stacks:
             print_list_msg(
-                compost[get_stack_category(args.stack[0])][args.stack[0]],
+                compost[retrieve_stack_category(args.stack[0])][args.stack[0]],
                 args.stack[0],
                 "stack",
                 "service",
                 "stop",
             )
-            stack_stop(compost[get_stack_category(args.stack[0])][args.stack[0]])
+            stack_stop(compost[retrieve_stack_category(args.stack[0])][args.stack[0]])
             print_list_msg(
-                compost[get_stack_category(args.stack[0])][args.stack[0]],
+                compost[retrieve_stack_category(args.stack[0])][args.stack[0]],
                 args.stack[0],
                 "stack",
                 "service",
                 "start",
             )
-            stack_deploy(args.stack[0], get_stack_category(args.stack[0]))
+            stack_deploy(args.stack[0], retrieve_stack_category(args.stack[0]))
         else:
             print("invalid stack")
             print_list_msg(compost, None, "all", "stack", "exists")

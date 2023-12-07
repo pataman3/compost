@@ -74,7 +74,7 @@ def stack_start(sn, cn):
             "up --detach --force-recreate",
         ]
     )
-    print("running command `", command_start, "`")
+    print("  via command `", command_start, "`", sep='')
     os.system(command_start)
 
 
@@ -96,9 +96,9 @@ def stack_stop(s):
     services.reverse()
     command_stop = "sudo docker stop " + " ".join(services)
     command_rm = "sudo docker rm " + " ".join(services)
-    print("running command `", command_stop, "`")
+    print("  via command `", command_stop, "`", sep='')
     os.system(command_stop)
-    print("running command `", command_rm, "`")
+    print("  via command `", command_rm, "`", sep='')
     os.system(command_rm)
 
 

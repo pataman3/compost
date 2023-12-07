@@ -8,6 +8,8 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /config/flame:/app/data
+    networks:
+      - compost-bin
     ports:
       - ${PORT_EXT}:${PORT_INT}
     environment:

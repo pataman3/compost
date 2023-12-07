@@ -5,6 +5,8 @@ services:
     image: traefik:latest
     pull_policy: always
     restart: unless-stopped
+    networks:
+      - compost-bin
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /config/traefik:/letsencrypt

@@ -31,11 +31,15 @@ def build_manifest():
     for category_directory in category_directories:
         if re.match(r"^[^.].+", category_directory):
             compost[category_directory] = {}
-            stack_files = os.listdir(os.path.join(os.getcwd(), os.pardir, category_directory))
+            stack_files = os.listdir(
+                os.path.join(os.getcwd(), os.pardir, category_directory)
+            )
             for stack_file in stack_files:
                 if re.match(r"^[^.].*\.yml$", stack_file):
                     file_path = os.path.abspath(
-                        os.path.join(os.getcwd(), os.pardir, category_directory, stack_file)
+                        os.path.join(
+                            os.getcwd(), os.pardir, category_directory, stack_file
+                        )
                     )
                     services = []
                     with open(file_path, "r") as file:
@@ -90,10 +94,12 @@ def list_deploy(l, pn, t):
 def stack_stop(s):
     services = s.copy()
     services.reverse()
-    services.insert(0, "sudo docker stop")
-    command_stop = " ".join(services)
+    command_stop = "sudo docker stop" + " ".join(services)
+    command_rm = "sudo docker rm" + " ".join(services)
+    print("running `", command_stop, "`")
     os.system(command_stop)
-    print("~ ", command_stop)
+    print("running `", command_rm, "`")
+    os.system(command_rm)
 
 
 # l : list

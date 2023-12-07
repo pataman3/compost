@@ -74,8 +74,8 @@ def stack_deploy(sn, cn):
             "up --detach --force-recreate",
         ]
     )
+    print("running command `", command_deploy, "`")
     os.system(command_deploy)
-    print("~ ", command_deploy)
 
 
 # l : list
@@ -96,9 +96,9 @@ def stack_stop(s):
     services.reverse()
     command_stop = "sudo docker stop" + " ".join(services)
     command_rm = "sudo docker rm" + " ".join(services)
-    print("running `", command_stop, "`")
+    print("running command `", command_stop, "`")
     os.system(command_stop)
-    print("running `", command_rm, "`")
+    print("running command `", command_rm, "`")
     os.system(command_rm)
 
 

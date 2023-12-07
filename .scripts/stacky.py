@@ -40,9 +40,8 @@ def build_manifest():
                     services = []
                     with open(fp, "r") as f:
                         for line in f:
-                            if re_is_service_line.fullmatch(line):
+                            if re_is_service_line.fullmatch(line) and not re_is_service_line.fullmatch('  compost-bin:\n'):
                                 services.append(re_is_service.search(line).group(0))
-                    services.remove('compost-bin')
                     compost[directory][file[:-4]] = services
     manifest = "manifest.json"
     with open(manifest, "w") as f:

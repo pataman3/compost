@@ -1,5 +1,5 @@
 import argparse
-import json
+# import json
 import os
 import re
 
@@ -27,19 +27,15 @@ def build_manifest():
     global compost
     re_is_service_line = re.compile(r"  [a-z0-9-.]+:\n")
     re_is_service = re.compile(r"[a-z0-9-.]+")
-    category_directories = os.listdir(os.path.join(os.getcwd(), os.pardir))
+    category_directories = os.listdir(os.getcwd())
     for category_directory in category_directories:
-        if re.match(r"^[^.].+", category_directory):
+        if re.match(r"^[a-z0-9-]+$", category_directory):
             compost[category_directory] = {}
-            stack_files = os.listdir(
-                os.path.join(os.getcwd(), os.pardir, category_directory)
-            )
+            stack_files = os.listdir(os.path.join(os.getcwd(), category_directory))
             for stack_file in stack_files:
                 if re.match(r"^[^.].*\.yml$", stack_file):
                     file_path = os.path.abspath(
-                        os.path.join(
-                            os.getcwd(), os.pardir, category_directory, stack_file
-                        )
+                        os.path.join(os.getcwd(), category_directory, stack_file)
                     )
                     services = []
                     with open(file_path, "r") as file:
@@ -48,9 +44,9 @@ def build_manifest():
                             if re_is_service_line.fullmatch(line):
                                 services.append(re_is_service.search(line).group(0))
                     compost[category_directory][stack_file[:-4]] = services
-    manifest = "manifest.json"
-    with open(manifest, "w") as file:
-        json.dump(compost, file)
+    # manifest = "manifest.json"
+    # with open(manifest, "w") as file:
+    #     json.dump(compost, file)
 
 
 # sn : stack name
@@ -74,7 +70,7 @@ def stack_start(sn, cn):
             "up --detach --force-recreate",
         ]
     )
-    print("  via command `", command_start, "`", sep='')
+    print("  via command `", command_start, "`", sep="")
     os.system(command_start)
 
 
@@ -96,9 +92,9 @@ def stack_stop(s):
     services.reverse()
     command_stop = "sudo docker stop " + " ".join(services)
     command_rm = "sudo docker rm " + " ".join(services)
-    print("  via command `", command_stop, "`", sep='')
+    print("  via command `", command_stop, "`", sep="")
     os.system(command_stop)
-    print("  via command `", command_rm, "`", sep='')
+    print("  via command `", command_rm, "`", sep="")
     os.system(command_rm)
 
 

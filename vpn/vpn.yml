@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+  wireguard:
+    container_name: wireguard
+    image: lscr.io/linuxserver/wireguard:latest
+    restart: unless-stopped
+    volumes:
+      - /config/wireguard:/config
+      - /lib/modules:/lib/modules
+    networks:
+      - default
+    ports:
+      - ${PORT_EXT}:${PORT_INT}/udp
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=US/Eastern
+      - SERVERURL=${HOST}
+      - SERVERPORT=${PORT_EXT}
+      - PEERS=myPhone
+      - PEERDNS=auto
+      - ALLOWEDIPS=0.0.0.0/0
+      - PERSISTENTKEEPALIVE_PEERS=myPhone
+      - LOG_CONFS=true
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+networks:
+  default:
+    name: default
+    external: true

@@ -9,7 +9,7 @@ services:
       - /config/filebrowser/filebrowser.db:/database.db
       - /libraries:/srv
     networks:
-      - compost-bin
+      - default
     ports:
       - ${PORT_EXT}:${PORT_INT}
     environment:
@@ -33,5 +33,6 @@ services:
       - flame.url=https://${HOST}/
       - flame.icon=folder
 networks:
-  compost-bin:
+  default:
+    name: default
     external: true

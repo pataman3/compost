@@ -9,7 +9,7 @@ services:
       - /config/pihole:/etc/pihole
       - /config/pihole/dnsmasq.d:/etc/dnsmasq.d
     networks:
-      - compost-bin
+      - default
     ports:
       - ${IP}:${PIHOLE_PORT_1_EXT}:${PIHOLE_PORT_1_INT}
       - ${IP}:${PIHOLE_PORT_1_EXT}:${PIHOLE_PORT_1_INT}/udp
@@ -46,10 +46,11 @@ services:
     pull_policy: always
     restart: unless-stopped
     networks:
-      - compost-bin
+      - default
     ports:
       - ${UNBOUND_PORT_EXT}:${UNBOUND_PORT_INT}
       - ${UNBOUND_PORT_EXT}:${UNBOUND_PORT_INT}/udp
 networks:
-  compost-bin:
+  default:
+    name: default
     external: true

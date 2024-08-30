@@ -9,8 +9,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /config/traefik:/letsencrypt
     networks:
+      - main
       - arr
-      - default
     ports:
       - ${PORT_1_EXT}:${PORT_1_INT}
       - ${PORT_2_EXT}:${PORT_2_INT}
@@ -53,9 +53,9 @@ services:
       - flame.url=https://${HOST}/
       - flame.icon=traffic-light
 networks:
+  main:
+    name: main
+    external: true
   arr:
     name: arr
-    external: true
-  default:
-    name: default
     external: true

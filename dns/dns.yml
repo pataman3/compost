@@ -26,7 +26,6 @@ services:
     labels:
       # traefik labels
       - traefik.enable=true
-      - traefik.docker.network=main
       - traefik.http.routers.pihole.entrypoints=web
       - traefik.http.routers.pihole.rule=Host(`${HOST}`)
       - traefik.http.middlewares.pihole-redirect.redirectscheme.scheme=https

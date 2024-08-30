@@ -9,7 +9,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /config/portainer:/data
     networks:
-      - compost-bin
+      - default
     ports:
       - ${PORT_1_EXT}:${PORT_1_INT}
       - ${PORT_2_EXT}:${PORT_2_INT}
@@ -30,5 +30,6 @@ services:
       - flame.url=https://${HOST}/
       - flame.icon=airport
 networks:
-  compost-bin:
+  default:
+    name: default
     external: true

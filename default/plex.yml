@@ -16,7 +16,7 @@ services:
       - /libraries/temp/plex/transcode:/transcode
       - /libraries/temp/plex/tmp:/tmp
     networks:
-      - compost-bin
+      - default
     ports:
       - ${IP}:${PORT_1_EXT}:${PORT_1_INT}
       - ${PORT_2_EXT}:${PORT_2_INT}/udp
@@ -52,5 +52,6 @@ services:
       - flame.url=https://${HOST}/
       - flame.icon=disc-player
 networks:
-  compost-bin:
+  default:
+    name: default
     external: true

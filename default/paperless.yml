@@ -8,7 +8,7 @@ services:
     volumes:
       - /config/redis-paperless:/data
     networks:
-      - compost-bin
+      - default
     ports:
       - ${REDIS_PORT_EXT}:${REDIS_PORT_INT}
     command: --save 60 1 --loglevel warning
@@ -41,7 +41,7 @@ services:
       - ./export:/usr/src/paperless/export
       - ./consume:/usr/src/paperless/consume
     networks:
-      - compost-bin
+      - default
     ports:
       - ${PAPERLESS_PORT_EXT}:${PAPERLESS_PORT_INT}
     environment:
@@ -72,5 +72,6 @@ services:
       - flame.url=https://${HOST}/
       - flame.icon=leaf
 networks:
-  compost-bin:
+  default:
+    name: default
     external: true

@@ -8,11 +8,12 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      - compost-bin
+      - default
     environment:
       - WATCHTOWER_CLEANUP=true
       - WATCHTOWER_INCLUDE_STOPPED=true
       - WATCHTOWER_ROLLING_RESTART=true
 networks:
-  compost-bin:
+  default:
+    name: default
     external: true

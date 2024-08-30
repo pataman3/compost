@@ -37,7 +37,7 @@ services:
       - VPN_TYPE=${VPN_TYPE}
       - WIREGUARD_ADDRESSES=${WIREGUARD_ADDRESSES}
       - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
-      - UPDATER_PERIOD=12
+      - UPDATER_PERIOD=6h
   bazarr:
     container_name: bazarr
     image: lscr.io/linuxserver/bazarr:latest

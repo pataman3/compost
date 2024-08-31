@@ -20,15 +20,15 @@ services:
       - ${PORT_4_EXT}:${PORT_4_INT}/udp
     labels:
       # traefik labels
-      - traefik.enable=true
-      - traefik.http.routers.jellyfin.entrypoints=web
-      - traefik.http.routers.jellyfin.rule=Host(`${HOST}`)
-      - traefik.http.middlewares.jellyfin-redirect.redirectscheme.scheme=https
-      - traefik.http.routers.jellyfin.middlewares=jellyfin-redirect
-      - traefik.http.routers.jellyfin-secure.entrypoints=websecure
-      - traefik.http.routers.jellyfin-secure.rule=Host(`${HOST}`)
-      - traefik.http.routers.jellyfin-secure.tls=true
-      - traefik.http.services.jellyfin-service.loadbalancer.server.port=${PORT_1_INT}
+      #- traefik.enable=true
+      #- traefik.http.routers.jellyfin.entrypoints=web
+      #- traefik.http.routers.jellyfin.rule=Host(`${HOST}`)
+      #- traefik.http.middlewares.jellyfin-redirect.redirectscheme.scheme=https
+      #- traefik.http.routers.jellyfin.middlewares=jellyfin-redirect
+      #- traefik.http.routers.jellyfin-secure.entrypoints=websecure
+      #- traefik.http.routers.jellyfin-secure.rule=Host(`${HOST}`)
+      #- traefik.http.routers.jellyfin-secure.tls=true
+      #- traefik.http.services.jellyfin-service.loadbalancer.server.port=${PORT_1_INT}
       # flame labels
       - flame.type=app
       - flame.name=jellyfin

@@ -1,7 +1,7 @@
 services:
   authelia:
     container_name: authelia
-    image: docker.io/authelia/authelia:latest
+    image: authelia/authelia:latest
     pull_policy: always
     restart: unless-stopped
     volumes:

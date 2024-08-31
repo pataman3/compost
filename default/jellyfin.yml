@@ -5,6 +5,7 @@ services:
     pull_policy: always
     restart: unless-stopped
     environment:
+      - JELLYFIN_PublishedServerUrl=https://jellyfin.${DOMAIN}
       - PUID=1000
       - PGID=1000
       - TZ=US/Eastern
@@ -18,25 +19,23 @@ services:
       - ${PORT_2_EXT}:${PORT_2_INT}
       - ${PORT_3_EXT}:${PORT_3_INT}/udp
       - ${PORT_4_EXT}:${PORT_4_INT}/udp
-    environment:
-      - JELLYFIN_PublishedServerUrl=https://${HOST}
     labels:
       # traefik labels
-      - traefik.enable=true
-      - traefik.http.routers.jellyfin.entrypoints=web
-      - traefik.http.routers.jellyfin.rule=Host(`${HOST}`)
-      - traefik.http.middlewares.jellyfin-redirect.redirectscheme.scheme=https
-      - traefik.http.routers.jellyfin.middlewares=jellyfin-redirect
-      - traefik.http.routers.jellyfin-secure.entrypoints=websecure
-      - traefik.http.routers.jellyfin-secure.rule=Host(`${HOST}`)
-      - traefik.http.routers.jellyfin-secure.tls=true
-      - traefik.http.services.jellyfin-service.loadbalancer.server.port=${PORT_1_INT}
+      #- traefik.enable=true
+      #- traefik.http.routers.jellyfin.entrypoints=web
+      #- traefik.http.routers.jellyfin.rule=Host(`jellyfin.${DOMAIN}`)
+      #- traefik.http.middlewares.jellyfin-redirect.redirectscheme.scheme=https
+      #- traefik.http.routers.jellyfin.middlewares=jellyfin-redirect
+      - traefik.http.routers.jellyfin.entrypoints=websecure
+      - traefik.http.routers.jellyfin.rule=Host(`jellyfin.${DOMAIN}`)
+      - traefik.http.routers.jellyfin.tls=true
+      - traefik.http.services.jellyfin.loadbalancer.server.port=${PORT_1_INT}
       # flame labels
       - flame.type=app
       - flame.name=jellyfin
-      - flame.url=https://${HOST}/
+      - flame.url=https://jellyfin.${DOMAIN}/
       - flame.icon=jellyfish
 networks:
   main:
     name: main
-    external: true
+    external: true 

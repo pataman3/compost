@@ -9,6 +9,7 @@ services:
       - PGID=1000
       - TZ=US/Eastern
     volumes:
+      - /config/jellyfin:/config
       - /libraries:/libraries
     networks:
       - main

@@ -19,7 +19,7 @@ services:
       - ${PORT_3_EXT}:${PORT_3_INT}/udp
       - ${PORT_4_EXT}:${PORT_4_INT}/udp
     environment:
-      - JELLYFIN_PublishedServerUrl=${HOST}
+      - JELLYFIN_PublishedServerUrl=https://${HOST}
     labels:
       # traefik labels
       - traefik.enable=true

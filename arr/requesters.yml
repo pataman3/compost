@@ -5,7 +5,7 @@ services:
     restart: unless-stopped
     network_mode: container:gluetun
     volumes:
-      - /config/jellyseerr:/config
+      - /config/jellyseerr:/app/config
     environment:
       - PUID=1000
       - PGID=1000

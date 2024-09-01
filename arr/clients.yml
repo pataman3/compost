@@ -1,0 +1,58 @@
+services:
+  nzbget:
+    container_name: nzbget
+    image: lscr.io/linuxserver/nzbget:latest
+    restart: unless-stopped
+    network_mode: container:gluetun
+    volumes:
+      - /config/nzbget:/config
+      - /libraries:/libraries
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.http.routers.nzbget.entrypoints=web
+      - traefik.http.routers.nzbget.rule=Host(`nzbget.${DOMAIN}`)
+      - traefik.http.middlewares.nzbget-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.nzbget.middlewares=nzbget-redirect
+      - traefik.http.routers.nzbget-secure.entrypoints=websecure
+      - traefik.http.routers.nzbget-secure.rule=Host(`nzbget.${DOMAIN}`)
+      - traefik.http.routers.nzbget-secure.tls=true
+      - traefik.http.services.nzbget-service.loadbalancer.server.port=${NZBGET_PORT_INT}
+      # flame labels
+      - flame.type=app
+      - flame.name=nzbget
+      - flame.url=https://nzbget.${DOMAIN}/
+      - flame.icon=target
+  qbittorrent:
+    container_name: qbittorrent
+    image: lscr.io/linuxserver/qbittorrent:latest
+    restart: unless-stopped
+    network_mode: container:gluetun
+    volumes:
+      - /config/qbittorrent:/config
+      - /libraries:/libraries
+    environment:
+      - PGID=1000
+      - PUID=1000
+      - TZ=${TZ}
+      - WEBUI_PORT=${QBITTORRENT_PORT_INT}
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.http.routers.qbittorrent.entrypoints=web
+      - traefik.http.routers.qbittorrent.rule=Host(`qbittorrent.${DOMAIN}`)
+      - traefik.http.middlewares.qbittorrent-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.qbittorrent.middlewares=qbittorrent-redirect
+      - traefik.http.routers.qbittorrent-secure.entrypoints=websecure
+      - traefik.http.routers.qbittorrent-secure.rule=Host(`qbittorrent.${DOMAIN}`)
+      - traefik.http.routers.qbittorrent-secure.tls=true
+      - traefik.http.services.qbittorrent-service.loadbalancer.server.port=${QBITTORRENT_PORT_INT}
+      # flame labels
+      - flame.type=app
+      - flame.name=qbittorrent
+      - flame.url=https://qbittorrent.${DOMAIN}/
+      - flame.icon=download

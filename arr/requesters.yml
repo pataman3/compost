@@ -1,20 +1,16 @@
 services:
   jellyseerr:
-    image: fallenbagel/jellyseerr:latest
     container_name: jellyseerr
-    pull_policy: always
+    image: fallenbagel/jellyseerr:latest
     restart: unless-stopped
+    networks_mode: container:gluetun
+    volumes:
+      - /config/jellyseerr:/config
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=US/Eastern
+      - TZ=${TZ}
       - LOG_LEVEL=debug
-    volumes:
-      - /config/jellyseerr:/config
-    networks:
-      - arr
-    ports:
-      - ${PORT_1_EXT}:${PORT_1_INT}
     labels:
       # traefik labels
       - traefik.enable=true
@@ -31,7 +27,3 @@ services:
       - flame.name=jellyseerr
       - flame.url=https://jellyseerr.${DOMAIN}/
       - flame.icon=jellyfish-outline
-networks:
-  arr:
-    name: arr
-    external: true

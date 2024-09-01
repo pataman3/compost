@@ -3,7 +3,7 @@ services:
     container_name: jellyseerr
     image: fallenbagel/jellyseerr:latest
     restart: unless-stopped
-    networks_mode: container:gluetun
+    network_mode: container:gluetun
     volumes:
       - /config/jellyseerr:/config
     environment:

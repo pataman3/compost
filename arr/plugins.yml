@@ -27,3 +27,14 @@ services:
       - flame.name=jellyseerr
       - flame.url=https://jellyseerr.${DOMAIN}/
       - flame.icon=jellyfish-outline
+  recyclarr:
+    container_name: recyclarr
+    image: ghcr.io/recyclarr/recyclarr
+    restart: unless-stopped
+    network_mode: container:gluetun
+    volumes:
+      - /config/recyclarr:/config
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}

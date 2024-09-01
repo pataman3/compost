@@ -21,7 +21,7 @@ services:
       - traefik.http.routers.jellyseerr-secure.entrypoints=websecure
       - traefik.http.routers.jellyseerr-secure.rule=Host(`jellyseerr.${DOMAIN}`)
       - traefik.http.routers.jellyseerr-secure.tls=true
-      - traefik.http.services.jellyseerr-service.loadbalancer.server.port=${PORT_1_INT}
+      - traefik.http.services.jellyseerr-service.loadbalancer.server.port=${JELLYSEERR_PORT_INT}
       # flame labels
       - flame.type=app
       - flame.name=jellyseerr

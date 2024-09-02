@@ -145,7 +145,7 @@ services:
     network_mode: container:gluetun
     volumes:
       - /config/sonarr-1080:/config
-      - /libraries:/libraries
+      - /libraries/media/shows/1080:/shows/1080
     environment:
       - PUID=1000
       - PGID=1000
@@ -160,7 +160,7 @@ services:
       - traefik.http.routers.sonarr-1080-secure.entrypoints=websecure
       - traefik.http.routers.sonarr-1080-secure.rule=Host(`sonarr-1080.${DOMAIN}`)
       - traefik.http.routers.sonarr-1080-secure.tls=true
-      - traefik.http.services.sonarr-1080-service.loadbalancer.server.port=${SONARR_1080_PORT_EXT}
+      - traefik.http.services.sonarr-1080-service.loadbalancer.server.port=${SONARR_1080_PORT_INT}
       # flame labels
       - flame.type=app
       - flame.name=sonarr-1080
@@ -173,7 +173,7 @@ services:
     network_mode: container:gluetun
     volumes:
       - /config/sonarr-2160:/config
-      - /libraries:/libraries
+      - /libraries/media/shows/2160:/shows/2160
     environment:
       - PUID=1000
       - PGID=1000
@@ -188,7 +188,7 @@ services:
       - traefik.http.routers.sonarr-2160-secure.entrypoints=websecure
       - traefik.http.routers.sonarr-2160-secure.rule=Host(`sonarr-2160.${DOMAIN}`)
       - traefik.http.routers.sonarr-2160-secure.tls=true
-      - traefik.http.services.sonarr-2160-service.loadbalancer.server.port=${SONARR_2160_PORT_EXT}
+      - traefik.http.services.sonarr-2160-service.loadbalancer.server.port=${SONARR_2160_PORT_INT}
       # flame labels
       - flame.type=app
       - flame.name=sonarr-2160
@@ -201,7 +201,7 @@ services:
     network_mode: container:gluetun
     volumes:
       - /config/sonarr-anime:/config
-      - /libraries:/libraries
+      - /libraries/media/shows/anime:/shows/anime
     environment:
       - PUID=1000
       - PGID=1000
@@ -216,7 +216,7 @@ services:
       - traefik.http.routers.sonarr-anime-secure.entrypoints=websecure
       - traefik.http.routers.sonarr-anime-secure.rule=Host(`sonarr-anime.${DOMAIN}`)
       - traefik.http.routers.sonarr-anime-secure.tls=true
-      - traefik.http.services.sonarr-anime-service.loadbalancer.server.port=${SONARR_ANIME_PORT_EXT}
+      - traefik.http.services.sonarr-anime-service.loadbalancer.server.port=${SONARR_ANIME_PORT_INT}
       # flame labels
       - flame.type=app
       - flame.name=sonarr-anime

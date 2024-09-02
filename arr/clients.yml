@@ -6,7 +6,7 @@ services:
     network_mode: container:gluetun
     volumes:
       - /config/nzbget:/config
-      - /libraries:/libraries
+      - /libraries/downloads/usenet:/usenet
     environment:
       - PUID=1000
       - PGID=1000
@@ -34,7 +34,7 @@ services:
     network_mode: container:gluetun
     volumes:
       - /config/qbittorrent:/config
-      - /libraries:/libraries
+      - /libraries/downloads/torrents:/torrents
     environment:
       - PGID=1000
       - PUID=1000

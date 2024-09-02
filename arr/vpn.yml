@@ -18,9 +18,9 @@ services:
       # readarr ports
       - ${READARR_PORT_EXT}:${READARR_PORT_INT} 
       # sonarr ports
-      - ${SONARR-1080_PORT_EXT}:${SONARR-1080_PORT_INT}
-      - ${SONARR-2160_PORT_EXT}:${SONARR-2160_PORT_INT}
-      - ${SONARR-ANIME_PORT_EXT}:${SONARR-ANIME_PORT_INT}
+      - ${SONARR_1080_PORT_EXT}:${SONARR_1080_PORT_INT}
+      - ${SONARR_2160_PORT_EXT}:${SONARR_2160_PORT_INT}
+      - ${SONARR_ANIME_PORT_EXT}:${SONARR_ANIME_PORT_INT}
       ### clients
       # qbittorrent ports
       - ${QBITTORRENT_PORT_EXT}:${QBITTORRENT_PORT_INT}

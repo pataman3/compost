@@ -40,6 +40,8 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=${TZ}
+      - SABNZBD_HOST=https://sabnzbd.${DOMAIN}/
+      - SABNZBD_PORT=${SABNZBD_PORT_INT}
     labels:
       # traefik labels
       - traefik.enable=true

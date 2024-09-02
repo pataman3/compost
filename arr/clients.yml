@@ -50,7 +50,7 @@ services:
       - traefik.http.routers.sabnzbd-secure.entrypoints=websecure
       - traefik.http.routers.sabnzbd-secure.rule=Host(`sabnzbd.${DOMAIN}`)
       - traefik.http.routers.sabnzbd-secure.tls=true
-      - traefik.http.services.sabnzbd-service.loadbalancer.server.port=${SABNZBD_PORT_EXT}
+      - traefik.http.services.sabnzbd-service.loadbalancer.server.port=${SABNZBD_PORT_INT}
       # flame labels
       - flame.type=app
       - flame.name=sabnzbd

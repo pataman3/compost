@@ -138,13 +138,13 @@ services:
       - flame.name=readarr
       - flame.url=https://readarr.${DOMAIN}/
       - flame.icon=book-open-page-variant
-  sonarr:
-    container_name: sonarr
+  sonarr-1080:
+    container_name: sonarr-1080
     image: lscr.io/linuxserver/sonarr:latest
     restart: unless-stopped
     network_mode: container:gluetun
     volumes:
-      - /config/sonarr:/config
+      - /config/sonarr-1080:/config
       - /libraries:/libraries
     environment:
       - PUID=1000
@@ -153,16 +153,72 @@ services:
     labels:
       # traefik labels
       - traefik.enable=true
-      - traefik.http.routers.sonarr.entrypoints=web
-      - traefik.http.routers.sonarr.rule=Host(`sonarr.${DOMAIN}`)
-      - traefik.http.middlewares.sonarr-redirect.redirectscheme.scheme=https
-      - traefik.http.routers.sonarr.middlewares=sonarr-redirect
-      - traefik.http.routers.sonarr-secure.entrypoints=websecure
-      - traefik.http.routers.sonarr-secure.rule=Host(`sonarr.${DOMAIN}`)
-      - traefik.http.routers.sonarr-secure.tls=true
-      - traefik.http.services.sonarr-service.loadbalancer.server.port=${SONARR_PORT_INT}
+      - traefik.http.routers.sonarr-1080.entrypoints=web
+      - traefik.http.routers.sonarr-1080.rule=Host(`sonarr-1080.${DOMAIN}`)
+      - traefik.http.middlewares.sonarr-1080-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.sonarr-1080.middlewares=sonarr-1080-redirect
+      - traefik.http.routers.sonarr-1080-secure.entrypoints=websecure
+      - traefik.http.routers.sonarr-1080-secure.rule=Host(`sonarr-1080.${DOMAIN}`)
+      - traefik.http.routers.sonarr-1080-secure.tls=true
+      - traefik.http.services.sonarr-1080-service.loadbalancer.server.port=${SONARR_PORT_INT}
       # flame labels
       - flame.type=app
-      - flame.name=sonarr
-      - flame.url=https://sonarr.${DOMAIN}/
+      - flame.name=sonarr-1080
+      - flame.url=https://sonarr-1080.${DOMAIN}/
+      - flame.icon=television-classic
+  sonarr-2160:
+    container_name: sonarr-2160
+    image: lscr.io/linuxserver/sonarr:latest
+    restart: unless-stopped
+    network_mode: container:gluetun
+    volumes:
+      - /config/sonarr-2160:/config
+      - /libraries:/libraries
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.http.routers.sonarr-2160.entrypoints=web
+      - traefik.http.routers.sonarr-2160.rule=Host(`sonarr-2160.${DOMAIN}`)
+      - traefik.http.middlewares.sonarr-2160-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.sonarr-2160.middlewares=sonarr-2160-redirect
+      - traefik.http.routers.sonarr-2160-secure.entrypoints=websecure
+      - traefik.http.routers.sonarr-2160-secure.rule=Host(`sonarr-2160.${DOMAIN}`)
+      - traefik.http.routers.sonarr-2160-secure.tls=true
+      - traefik.http.services.sonarr-2160-service.loadbalancer.server.port=${SONARR_PORT_INT}
+      # flame labels
+      - flame.type=app
+      - flame.name=sonarr-2160
+      - flame.url=https://sonarr-2160.${DOMAIN}/
+      - flame.icon=television-classic
+  sonarr-anime:
+    container_name: sonarr-anime
+    image: lscr.io/linuxserver/sonarr:latest
+    restart: unless-stopped
+    network_mode: container:gluetun
+    volumes:
+      - /config/sonarr-anime:/config
+      - /libraries:/libraries
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.http.routers.sonarr-anime.entrypoints=web
+      - traefik.http.routers.sonarr-anime.rule=Host(`sonarr-anime.${DOMAIN}`)
+      - traefik.http.middlewares.sonarr-anime-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.sonarr-anime.middlewares=sonarr-anime-redirect
+      - traefik.http.routers.sonarr-anime-secure.entrypoints=websecure
+      - traefik.http.routers.sonarr-anime-secure.rule=Host(`sonarr-anime.${DOMAIN}`)
+      - traefik.http.routers.sonarr-anime-secure.tls=true
+      - traefik.http.services.sonarr-anime-service.loadbalancer.server.port=${SONARR_PORT_INT}
+      # flame labels
+      - flame.type=app
+      - flame.name=sonarr-anime
+      - flame.url=https://sonarr-anime.${DOMAIN}/
       - flame.icon=television-classic

@@ -1,32 +1,4 @@
 services:
-  nzbget:
-    container_name: nzbget
-    image: lscr.io/linuxserver/nzbget:latest
-    restart: unless-stopped
-    network_mode: container:gluetun
-    volumes:
-      - /config/nzbget:/config
-      - /libraries/downloads/usenet:/usenet
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=${TZ}
-    labels:
-      # traefik labels
-      - traefik.enable=true
-      - traefik.http.routers.nzbget.entrypoints=web
-      - traefik.http.routers.nzbget.rule=Host(`nzbget.${DOMAIN}`)
-      - traefik.http.middlewares.nzbget-redirect.redirectscheme.scheme=https
-      - traefik.http.routers.nzbget.middlewares=nzbget-redirect
-      - traefik.http.routers.nzbget-secure.entrypoints=websecure
-      - traefik.http.routers.nzbget-secure.rule=Host(`nzbget.${DOMAIN}`)
-      - traefik.http.routers.nzbget-secure.tls=true
-      - traefik.http.services.nzbget-service.loadbalancer.server.port=${NZBGET_PORT_INT}
-      # flame labels
-      - flame.type=app
-      - flame.name=nzbget
-      - flame.url=https://nzbget.${DOMAIN}/
-      - flame.icon=target
   qbittorrent:
     container_name: qbittorrent
     image: lscr.io/linuxserver/qbittorrent:latest
@@ -56,3 +28,31 @@ services:
       - flame.name=qbittorrent
       - flame.url=https://qbittorrent.${DOMAIN}/
       - flame.icon=download
+  sabnzbd:
+    container_name: sabnzbd
+    image: lscr.io/linuxserver/sabnzbd:latest
+    restart: unless-stopped
+    network_mode: container:gluetun
+    volumes:
+      - /config/sabnzbd:/config
+      - /libraries/downloads/usenet:/usenet
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.http.routers.sabnzbd.entrypoints=web
+      - traefik.http.routers.sabnzbd.rule=Host(`sabnzbd.${DOMAIN}`)
+      - traefik.http.middlewares.sabnzbd-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.sabnzbd.middlewares=sabnzbd-redirect
+      - traefik.http.routers.sabnzbd-secure.entrypoints=websecure
+      - traefik.http.routers.sabnzbd-secure.rule=Host(`sabnzbd.${DOMAIN}`)
+      - traefik.http.routers.sabnzbd-secure.tls=true
+      - traefik.http.services.sabnzbd-service.loadbalancer.server.port=${SABNZBD_PORT_INT}
+      # flame labels
+      - flame.type=app
+      - flame.name=sabnzbd
+      - flame.url=https://sabnzbd.${DOMAIN}/
+      - flame.icon=target

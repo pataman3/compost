@@ -20,12 +20,12 @@ services:
       # sonarr ports
       - ${SONARR_PORT_EXT}:${SONARR_PORT_INT}
       ### clients
-      # nzbget ports
-      - ${NZBGET_PORT_EXT}:${NZBGET_PORT_INT}
       # qbittorrent ports
       - ${QBITTORRENT_PORT_EXT}:${QBITTORRENT_PORT_INT}
       - ${QBITTORRENT_PORT_2_EXT}:${QBITTORRENT_PORT_2_INT}
       - ${QBITTORRENT_PORT_2_EXT}:${QBITTORRENT_PORT_2_INT}/udp
+      # sabnzbd ports
+      - ${SABNZBD_PORT_EXT}:${SABNZBD_PORT_INT}
       ### requesters
       # jellyseerr ports
       - ${JELLYSEERR_PORT_EXT}:${JELLYSEERR_PORT_INT}

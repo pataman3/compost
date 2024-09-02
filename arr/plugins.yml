@@ -35,6 +35,4 @@ services:
     volumes:
       - /config/recyclarr:/config
     environment:
-      - PUID=1000
-      - PGID=1000
       - TZ=${TZ}

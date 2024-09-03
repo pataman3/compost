@@ -13,7 +13,7 @@ services:
       - /config/jellyfin:/config
       - /libraries:/libraries
     networks:
-      - main
+      - arr
     ports:
       - ${PORT_1_EXT}:${PORT_1_INT}
       - ${PORT_2_EXT}:${PORT_2_INT}
@@ -36,6 +36,6 @@ services:
       - flame.url=https://jellyfin.${DOMAIN}/
       - flame.icon=jellyfish
 networks:
-  main:
-    name: main
+  arr:
+    name: arr
     external: true

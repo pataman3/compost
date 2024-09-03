@@ -45,7 +45,7 @@ services:
     networks:
       - arr
     ports:
-      - ${JELLYSEER_PORT_1_EXT}:${JELLYSEER_PORT_1_INT}
+      - ${JELLYSEERR_PORT_1_EXT}:${JELLYSEERR_PORT_1_INT}
     environment:
       - PUID=1000
       - PGID=1000
@@ -61,7 +61,7 @@ services:
       - traefik.http.routers.jellyseerr-secure.entrypoints=websecure
       - traefik.http.routers.jellyseerr-secure.rule=Host(`jellyseerr.${DOMAIN}`)
       - traefik.http.routers.jellyseerr-secure.tls=true
-      - traefik.http.services.jellyseerr-service.loadbalancer.server.port=${JELLYSEERR_JELLYFIN_PORT_INT}
+      - traefik.http.services.jellyseerr-service.loadbalancer.server.port=${JELLYSEERR_PORT_1_INT}
       # flame labels
       - flame.type=app
       - flame.name=jellyseerr

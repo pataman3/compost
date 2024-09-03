@@ -13,7 +13,9 @@ services:
       - /config/jellyfin:/config
       - /libraries:/libraries
     networks:
-      - arr
+      arr:
+        aliases:
+          - jellyfin
     ports:
       - ${PORT_1_EXT}:${PORT_1_INT}
       - ${PORT_2_EXT}:${PORT_2_INT}

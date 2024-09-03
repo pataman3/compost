@@ -28,9 +28,6 @@ services:
       - ${QBITTORRENT_PORT_2_EXT}:${QBITTORRENT_PORT_2_INT}/udp
       # sabnzbd ports
       - ${SABNZBD_PORT_EXT}:${SABNZBD_PORT_INT}
-      ### requesters
-      # jellyseerr ports
-      - ${JELLYSEERR_PORT_EXT}:${JELLYSEERR_PORT_INT}
     cap_add:
       - NET_ADMIN
     devices:

@@ -1,32 +1,4 @@
 services:
-  jellyseerr:
-    container_name: jellyseerr
-    image: fallenbagel/jellyseerr:latest
-    restart: unless-stopped
-    network_mode: container:gluetun
-    volumes:
-      - /config/jellyseerr:/app/config
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=${TZ}
-      - LOG_LEVEL=debug
-    labels:
-      # traefik labels
-      - traefik.enable=true
-      - traefik.http.routers.jellyseerr.entrypoints=web
-      - traefik.http.routers.jellyseerr.rule=Host(`jellyseerr.${DOMAIN}`)
-      - traefik.http.middlewares.jellyseerr-redirect.redirectscheme.scheme=https
-      - traefik.http.routers.jellyseerr.middlewares=jellyseerr-redirect
-      - traefik.http.routers.jellyseerr-secure.entrypoints=websecure
-      - traefik.http.routers.jellyseerr-secure.rule=Host(`jellyseerr.${DOMAIN}`)
-      - traefik.http.routers.jellyseerr-secure.tls=true
-      - traefik.http.services.jellyseerr-service.loadbalancer.server.port=${JELLYSEERR_PORT_INT}
-      # flame labels
-      - flame.type=app
-      - flame.name=jellyseerr
-      - flame.url=https://jellyseerr.${DOMAIN}/
-      - flame.icon=jellyfish-outline
   recyclarr:
     container_name: recyclarr
     image: ghcr.io/recyclarr/recyclarr:latest

@@ -1,0 +1,73 @@
+services:
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin
+    pull_policy: always
+    restart: unless-stopped
+    volumes:
+      - /config/jellyfin:/config
+      - /libraries/media:/media
+    networks:
+      - arr
+    ports:
+      - ${JELLYFIN_PORT_1_EXT}:${JELLYFIN_PORT_1_INT}
+      - ${JELLYFIN_PORT_2_EXT}:${JELLYFIN_PORT_2_INT}
+      - ${JELLYFIN_PORT_3_EXT}:${JELLYFIN_PORT_3_INT}/udp
+      - ${JELLYFIN_PORT_4_EXT}:${JELLYFIN_PORT_4_INT}/udp
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=US/Eastern
+      - JELLYFIN_PublishedServerUrl=https://jellyfin.${DOMAIN}
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.http.routers.jellyfin.entrypoints=web
+      - traefik.http.routers.jellyfin.rule=Host(`jellyfin.${DOMAIN}`)
+      - traefik.http.middlewares.jellyfin-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.jellyfin.middlewares=jellyfin-redirect
+      - traefik.http.routers.jellyfin-secure.entrypoints=websecure
+      - traefik.http.routers.jellyfin-secure.rule=Host(`jellyfin.${DOMAIN}`)
+      - traefik.http.routers.jellyfin-secure.tls=true
+      - traefik.http.services.jellyfin-service.loadbalancer.server.port=${JELLYFIN_PORT_1_INT}
+      # flame labels
+      - flame.type=app
+      - flame.name=jellyfin
+      - flame.url=https://jellyfin.${DOMAIN}/
+      - flame.icon=jellyfish
+  jellyseerr:
+    container_name: jellyseerr
+    image: fallenbagel/jellyseerr:latest
+    pull_policy: always
+    restart: unless-stopped
+    volumes:
+      - /config/jellyseerr:/app/config
+    networks:
+      - arr
+    ports:
+      - ${JELLYSEER_PORT_1_EXT}:${JELLYSEER_PORT_1_INT}
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+      - LOG_LEVEL=debug
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.http.routers.jellyseerr.entrypoints=web
+      - traefik.http.routers.jellyseerr.rule=Host(`jellyseerr.${DOMAIN}`)
+      - traefik.http.middlewares.jellyseerr-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.jellyseerr.middlewares=jellyseerr-redirect
+      - traefik.http.routers.jellyseerr-secure.entrypoints=websecure
+      - traefik.http.routers.jellyseerr-secure.rule=Host(`jellyseerr.${DOMAIN}`)
+      - traefik.http.routers.jellyseerr-secure.tls=true
+      - traefik.http.services.jellyseerr-service.loadbalancer.server.port=${JELLYSEERR_JELLYFIN_PORT_INT}
+      # flame labels
+      - flame.type=app
+      - flame.name=jellyseerr
+      - flame.url=https://jellyseerr.${DOMAIN}/
+      - flame.icon=jellyfish-outline
+networks:
+  arr:
+    name: arr
+    external: true

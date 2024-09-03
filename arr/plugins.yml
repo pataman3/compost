@@ -29,10 +29,22 @@ services:
       - flame.icon=jellyfish-outline
   recyclarr:
     container_name: recyclarr
-    image: ghcr.io/recyclarr/recyclarr
+    image: ghcr.io/recyclarr/recyclarr:latest
     restart: unless-stopped
     network_mode: container:gluetun
     volumes:
       - /config/recyclarr:/config
     environment:
+      - TZ=${TZ}
+  unpackerr:
+    container_name: unpackerr
+    image: ghcr.io/hotio/unpackerr:latest
+    restart: unless-stopped
+    network_mode: container:gluetun
+    volumes:
+      - /config/unpackerr:/config
+      - /libraries/downloads:/downloads
+    environment:
+      - PUID=1000
+      - PGID=1000
       - TZ=${TZ}

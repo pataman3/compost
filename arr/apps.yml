@@ -146,6 +146,7 @@ services:
     volumes:
       - /config/sonarr-1080:/config
       - /libraries/media/shows/1080:/shows/1080
+      - /libraries/media/imports:/imports
     environment:
       - PUID=1000
       - PGID=1000
@@ -174,6 +175,7 @@ services:
     volumes:
       - /config/sonarr-2160:/config
       - /libraries/media/shows/2160:/shows/2160
+      - /libraries/media/imports:/imports
     environment:
       - PUID=1000
       - PGID=1000
@@ -202,6 +204,7 @@ services:
     volumes:
       - /config/sonarr-anime:/config
       - /libraries/media/shows/anime:/shows/anime
+      - /libraries/media/imports:/imports
     environment:
       - PUID=1000
       - PGID=1000

@@ -49,7 +49,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=${TZ}
+      - TZ=US/Eastern
       - LOG_LEVEL=debug
     labels:
       # traefik labels

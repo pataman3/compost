@@ -82,14 +82,16 @@ services:
       - flame.name=prowlarr
       - flame.url=https://prowlarr.${DOMAIN}/
       - flame.icon=file-find
-  radarr:
-    container_name: radarr
+  radarr-1080:
+    container_name: radarr-1080
     image: lscr.io/linuxserver/radarr:latest
     restart: unless-stopped
     network_mode: container:gluetun
     volumes:
-      - /config/radarr:/config
-      - /libraries:/libraries
+      - /config/radarr-1080:/config
+      - /libraries/media/video/1080:/video/1080
+      - /libraries/downloads/torrents/complete/radarr-1080:/torrents/complete/radarr-1080
+      - /libraries/downloads/usenet/complete/radarr-1080:/usenet/complete/radarr-1080
     environment:
       - PUID=1000
       - PGID=1000
@@ -97,18 +99,78 @@ services:
     labels:
       # traefik labels
       - traefik.enable=true
-      - traefik.http.routers.radarr.entrypoints=web
-      - traefik.http.routers.radarr.rule=Host(`radarr.${DOMAIN}`)
-      - traefik.http.middlewares.radarr-redirect.redirectscheme.scheme=https
-      - traefik.http.routers.radarr.middlewares=radarr-redirect
-      - traefik.http.routers.radarr-secure.entrypoints=websecure
-      - traefik.http.routers.radarr-secure.rule=Host(`radarr.${DOMAIN}`)
-      - traefik.http.routers.radarr-secure.tls=true
-      - traefik.http.services.radarr-service.loadbalancer.server.port=${RADARR_PORT_INT}
+      - traefik.http.routers.radarr-1080.entrypoints=web
+      - traefik.http.routers.radarr-1080.rule=Host(`radarr-1080.${DOMAIN}`)
+      - traefik.http.middlewares.radarr-1080-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.radarr-1080.middlewares=radarr-1080-redirect
+      - traefik.http.routers.radarr-1080-secure.entrypoints=websecure
+      - traefik.http.routers.radarr-1080-secure.rule=Host(`radarr-1080.${DOMAIN}`)
+      - traefik.http.routers.radarr-1080-secure.tls=true
+      - traefik.http.services.radarr-1080-service.loadbalancer.server.port=${RADARR_1080_PORT_INT}
       # flame labels
       - flame.type=app
-      - flame.name=radarr
-      - flame.url=https://radarr.${DOMAIN}/
+      - flame.name=radarr-1080
+      - flame.url=https://radarr-1080.${DOMAIN}/
+      - flame.icon=movie
+  radarr-2160:
+    container_name: radarr-2160
+    image: lscr.io/linuxserver/radarr:latest
+    restart: unless-stopped
+    network_mode: container:gluetun
+    volumes:
+      - /config/radarr-2160:/config
+      - /libraries/media/video/2160:/video/2160
+      - /libraries/downloads/torrents/complete/radarr-2160:/torrents/complete/radarr-2160
+      - /libraries/downloads/usenet/complete/radarr-2160:/usenet/complete/radarr-2160
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.http.routers.radarr-2160.entrypoints=web
+      - traefik.http.routers.radarr-2160.rule=Host(`radarr-2160.${DOMAIN}`)
+      - traefik.http.middlewares.radarr-2160-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.radarr-2160.middlewares=radarr-2160-redirect
+      - traefik.http.routers.radarr-2160-secure.entrypoints=websecure
+      - traefik.http.routers.radarr-2160-secure.rule=Host(`radarr-2160.${DOMAIN}`)
+      - traefik.http.routers.radarr-2160-secure.tls=true
+      - traefik.http.services.radarr-2160-service.loadbalancer.server.port=${RADARR_2160_PORT_INT}
+      # flame labels
+      - flame.type=app
+      - flame.name=radarr-2160
+      - flame.url=https://radarr-2160.${DOMAIN}/
+      - flame.icon=movie
+  radarr-anime:
+    container_name: radarr-anime
+    image: lscr.io/linuxserver/radarr:latest
+    restart: unless-stopped
+    network_mode: container:gluetun
+    volumes:
+      - /config/radarr-anime:/config
+      - /libraries/media/video/anime:/video/anime
+      - /libraries/downloads/torrents/complete/radarr-anime:/torrents/complete/radarr-anime
+      - /libraries/downloads/usenet/complete/radarr-anime:/usenet/complete/radarr-anime
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.http.routers.radarr-anime.entrypoints=web
+      - traefik.http.routers.radarr-anime.rule=Host(`radarr-anime.${DOMAIN}`)
+      - traefik.http.middlewares.radarr-anime-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.radarr-anime.middlewares=radarr-anime-redirect
+      - traefik.http.routers.radarr-anime-secure.entrypoints=websecure
+      - traefik.http.routers.radarr-anime-secure.rule=Host(`radarr-anime.${DOMAIN}`)
+      - traefik.http.routers.radarr-anime-secure.tls=true
+      - traefik.http.services.radarr-anime-service.loadbalancer.server.port=${RADARR_ANIME_PORT_INT}
+      # flame labels
+      - flame.type=app
+      - flame.name=radarr-anime
+      - flame.url=https://radarr-anime.${DOMAIN}/
       - flame.icon=movie
   readarr:
     container_name: readarr

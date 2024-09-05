@@ -89,7 +89,7 @@ services:
     network_mode: container:gluetun
     volumes:
       - /config/radarr-1080:/config
-      - /libraries/media/video/1080:/video/1080
+      - /libraries/media/movies/1080:/movies/1080
       - /libraries/downloads/torrents/complete/radarr-1080:/torrents/complete/radarr-1080
       - /libraries/downloads/usenet/complete/radarr-1080:/usenet/complete/radarr-1080
     environment:
@@ -119,7 +119,7 @@ services:
     network_mode: container:gluetun
     volumes:
       - /config/radarr-2160:/config
-      - /libraries/media/video/2160:/video/2160
+      - /libraries/media/movies/2160:/movies/2160
       - /libraries/downloads/torrents/complete/radarr-2160:/torrents/complete/radarr-2160
       - /libraries/downloads/usenet/complete/radarr-2160:/usenet/complete/radarr-2160
     environment:
@@ -149,7 +149,7 @@ services:
     network_mode: container:gluetun
     volumes:
       - /config/radarr-anime:/config
-      - /libraries/media/video/anime:/video/anime
+      - /libraries/media/movies/anime:/movies/anime
       - /libraries/downloads/torrents/complete/radarr-anime:/torrents/complete/radarr-anime
       - /libraries/downloads/usenet/complete/radarr-anime:/usenet/complete/radarr-anime
     environment:

@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   watchtower:
     container_name: watchtower
@@ -8,12 +7,16 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      - default
+      - main
+      - arr
     environment:
       - WATCHTOWER_CLEANUP=true
       - WATCHTOWER_INCLUDE_STOPPED=true
       - WATCHTOWER_ROLLING_RESTART=true
 networks:
-  default:
-    name: default
+  main:
+    name: main
+    external: true
+  arr:
+    name: arr
     external: true

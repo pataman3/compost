@@ -1,0 +1,71 @@
+services:
+  redis-immich:
+    container_name: redis-immich
+    image: docker.io/redis:6.2-alpine@sha256:2d1463258f2764328496376f5d965f20c6a67f66ea2b06dc42af351f75248792
+    pull_policy: always
+    restart: unless-stopped
+    networks:
+      - main
+  postgres-immich:
+    container_name: postgres-immich
+    image: docker.io/tensorchord/pgvecto-rs:pg14-v0.2.0@sha256:90724186f0a3517cf6914295b5ab410db9ce23190a2d9d0b9dd6463e3fa298f0
+    pull_policy: always
+    restart: unless-stopped
+    networks:
+      - main
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_INITDB_ARGS: '--data-checksums'
+    volumes:
+      - /config/postgres-immich:/var/lib/postgresql/data
+    command: ["postgres", "-c", "shared_preload_libraries=vectors.so", "-c", 'search_path="$$user", public, vectors', "-c", "logging_collector=on", "-c", "max_wal_size=2GB", "-c", "shared_buffers=512MB", "-c", "wal_compression=on"]
+  immich:
+    container_name: immich
+    image: ghcr.io/immich-app/immich-server:release
+    pull_policy: always
+    restart: unless-stopped
+    depends_on:
+      - redis-immich
+      - postgres-immich
+    volumes:
+      - /libraries/media/pictures:/usr/src/app/upload
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - main
+    ports:
+      - ${IMMICH_PORT_EXT}:${IMMICH_PORT_INT}
+    environment:
+      - TZ=US/Eastern
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.http.routers.immich.entrypoints=web
+      - traefik.http.routers.immich.rule=Host(`immich.${DOMAIN}`)
+      - traefik.http.middlewares.immich-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.immich.middlewares=immich-redirect
+      - traefik.http.routers.immich-secure.entrypoints=websecure
+      - traefik.http.routers.immich-secure.rule=Host(`immich.${DOMAIN}`)
+      - traefik.http.routers.immich-secure.tls=true
+      - traefik.http.services.immich-service.loadbalancer.server.port=${IMMICH_PORT_INT}
+      # flame labels
+      - flame.type=app
+      - flame.name=immich
+      - flame.url=https://immich.${DOMAIN}/
+      - flame.icon=image-multiple
+  immich-ml:
+    container_name: immich-ml
+    image: ghcr.io/immich-app/immich-machine-learning:release
+    pull_policy: always
+    restart: unless-stopped
+    volumes:
+      - model-cache:/cache
+    networks:
+      - main
+volumes:
+  model-cache:
+networks:
+  main:
+    name: main
+    external: true

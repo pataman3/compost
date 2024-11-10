@@ -1,0 +1,34 @@
+services:
+  audiobookshelf:
+    container_name: audiobookshelf
+    image: ghcr.io/advplyr/audiobookshelf:latest
+    pull_policy: always
+    restart: unless-stopped
+    volumes:
+      - /config/audiobookshelf/config:/config
+      - /config/audiobookshelf/metadata:/metadata
+      - /libraries/media:/media
+    networks:
+      - arr
+    ports:
+      - ${AUDIOBOOKSHELF_PORT_1_EXT}:${AUDIOBOOKSHELF_PORT_1_INT}
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=US/Eastern
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.http.routers.audiobookshelf.entrypoints=web
+      - traefik.http.routers.audiobookshelf.rule=Host(`audiobookshelf.${DOMAIN}`)
+      - traefik.http.middlewares.audiobookshelf-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.audiobookshelf.middlewares=audiobookshelf-redirect
+      - traefik.http.routers.audiobookshelf-secure.entrypoints=websecure
+      - traefik.http.routers.audiobookshelf-secure.rule=Host(`audiobookshelf.${DOMAIN}`)
+      - traefik.http.routers.audiobookshelf-secure.tls=true
+      - traefik.http.services.audiobookshelf-service.loadbalancer.server.port=${AUDIOBOOKSHELF_PORT_1_INT}
+      # flame labels
+      - flame.type=app
+      - flame.name=audiobookshelf
+      - flame.url=https://audiobookshelf.${DOMAIN}/
+      - flame.icon=book-open-page-variant

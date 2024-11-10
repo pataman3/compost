@@ -34,7 +34,9 @@ services:
     network_mode: container:gluetun
     volumes:
       - /config/lidarr:/config
-      - /libraries:/libraries
+      - /libraries/media/music:/music
+      - /libraries/downloads/torrents/complete/lidarr:/torrents/complete/lidarr
+      - /libraries/downloads/usenet/complete/lidarr:/usenet/complete/lidarr
     environment:
       - PUID=1000
       - PGID=1000

@@ -1,0 +1,39 @@
+services:
+  donetick:
+    container_name: donetick
+    image: donetick/donetick:latest
+    pull_policy: always
+    restart: unless-stopped
+    volumes:
+      - /config/donetick/data:/donetick-data
+      - /config/donetick/config:/config
+    networks:
+      - main
+    ports:
+      - ${PORT_1_EXT}:${PORT_1_INT}
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=US/Eastern
+      - DT_ENV=selfhosted
+      - DT_SQLITE_PATH=/donetick-data/donetick.db
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.http.routers.donetick.entrypoints=web
+      - traefik.http.routers.donetick.rule=Host(`donetick.${DOMAIN}`)
+      - traefik.http.middlewares.donetick-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.donetick.middlewares=donetick-redirect
+      - traefik.http.routers.donetick-secure.entrypoints=websecure
+      - traefik.http.routers.donetick-secure.rule=Host(`donetick.${DOMAIN}`)
+      - traefik.http.routers.donetick-secure.tls=true
+      - traefik.http.services.donetick-service.loadbalancer.server.port=${PORT_1_INT}
+      # flame labels
+      - flame.type=app
+      - flame.name=donetick
+      - flame.url=https://kanboard.${DOMAIN}/
+      - flame.icon=format-list-checks
+networks:
+  main:
+    name: main
+    external: true

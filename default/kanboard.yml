@@ -12,7 +12,6 @@ services:
       - main
     ports:
       - ${PORT_1_EXT}:${PORT_1_INT}
-      - ${PORT_2_EXT}:${PORT_2_INT}
     environment:
       - PUID=1000
       - PGID=1000

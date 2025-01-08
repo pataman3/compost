@@ -21,11 +21,11 @@ services:
       # traefik labels
       - traefik.enable=true
       - traefik.http.routers.kanboard.entrypoints=web
-      - traefik.http.routers.kanboard.rule=Host(`files.${DOMAIN}`)
+      - traefik.http.routers.kanboard.rule=Host(`kanboard.${DOMAIN}`)
       - traefik.http.middlewares.kanboard-redirect.redirectscheme.scheme=https
       - traefik.http.routers.kanboard.middlewares=kanboard-redirect
       - traefik.http.routers.kanboard-secure.entrypoints=websecure
-      - traefik.http.routers.kanboard-secure.rule=Host(`files.${DOMAIN}`)
+      - traefik.http.routers.kanboard-secure.rule=Host(`kanboard.${DOMAIN}`)
       - traefik.http.routers.kanboard-secure.tls=true
       - traefik.http.services.kanboard-service.loadbalancer.server.port=${PORT_1_INT}
       # flame labels

@@ -5,8 +5,8 @@ services:
     pull_policy: always
     restart: unless-stopped
     volumes:
-      - /config/donetick/data:/donetick-data
       - /config/donetick/config:/config
+      - /config/donetick/data:/donetick-data
     networks:
       - main
     ports:
@@ -29,7 +29,7 @@ services:
       # flame labels
       - flame.type=app
       - flame.name=donetick
-      - flame.url=https://kanboard.${DOMAIN}/
+      - flame.url=https://donetick.${DOMAIN}/
       - flame.icon=format-list-checks
 networks:
   main:

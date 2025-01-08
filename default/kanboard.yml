@@ -1,0 +1,39 @@
+services:
+  kanboard:
+    container_name: kanboard
+    image: kanboard/kanboard:latest
+    pull_policy: always
+    restart: unless-stopped
+    volumes:
+      - /config/kanboard/data:/var/www/app/data
+      - /config/kanboard/plugins:/var/www/app/plugins
+      - /config/kanboard/ssl:/etc/nginx/ssl
+    networks:
+      - main
+    ports:
+      - ${PORT_1_EXT}:${PORT_1_INT}
+      - ${PORT_2_EXT}:${PORT_2_INT}
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=US/Eastern
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.http.routers.kanboard.entrypoints=web
+      - traefik.http.routers.kanboard.rule=Host(`files.${DOMAIN}`)
+      - traefik.http.middlewares.kanboard-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.kanboard.middlewares=kanboard-redirect
+      - traefik.http.routers.kanboard-secure.entrypoints=websecure
+      - traefik.http.routers.kanboard-secure.rule=Host(`files.${DOMAIN}`)
+      - traefik.http.routers.kanboard-secure.tls=true
+      - traefik.http.services.kanboard-service.loadbalancer.server.port=${PORT_INT}
+      # flame labels
+      - flame.type=app
+      - flame.name=kanboard
+      - flame.url=https://kanboard.${DOMAIN}/
+      - flame.icon=bulletin-board
+networks:
+  main:
+    name: main
+    external: true

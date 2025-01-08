@@ -181,7 +181,9 @@ services:
     network_mode: container:gluetun
     volumes:
       - /config/readarr:/config
-      - /libraries:/libraries
+      - /libraries/media/books:/books
+      - /libraries/downloads/torrents/complete/readarr:/torrents/complete/readarr
+      - /libraries/downloads/usenet/complete/readarr:/usenet/complete/readarr
     environment:
       - PUID=1000
       - PGID=1000

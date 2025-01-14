@@ -1,0 +1,44 @@
+services:
+  crafty:
+    container_name: crafty
+    image: registry.gitlab.com/crafty-controller/crafty-4:latest
+    pull_policy: always
+    restart: unless-stopped
+    volumes:
+      - /config/crafty/config:/crafty/app/config
+      - /config/crafty/logs:/crafty/logs
+      - /libraries/games/minecraft/backups:/crafty/backups
+      - /libraries/games/minecraft/servers:/crafty/servers
+      - /libraries/games/minecraft/import:/crafty/import
+    networks:
+      - main
+    ports:
+      - ${PORT_1_EXT}:${PORT_1_INT}
+      - ${PORT_2_EXT}:${PORT_2_INT}
+      - ${PORT_3_EXT}:${PORT_3_INT}
+      - ${PORT_4_EXT}:${PORT_4_INT}
+      - ${PORT_5_EXT}:${PORT_5_INT}
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=US/Eastern
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.http.routers.crafty.entrypoints=web
+      - traefik.http.routers.crafty.rule=Host(`crafty.${DOMAIN}`)
+      - traefik.http.middlewares.crafty-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.crafty.middlewares=crafty-redirect
+      - traefik.http.routers.crafty-secure.entrypoints=websecure
+      - traefik.http.routers.crafty-secure.rule=Host(`crafty.${DOMAIN}`)
+      - traefik.http.routers.crafty-secure.tls=true
+      - traefik.http.services.crafty-service.loadbalancer.server.port=${PORT_1_INT}
+      # flame labels
+      - flame.type=app
+      - flame.name=crafty
+      - flame.url=https://crafty.${DOMAIN}/
+      - flame.icon=minecraft
+networks:
+  main:
+    name: main
+    external: true

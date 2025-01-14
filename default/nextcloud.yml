@@ -32,6 +32,22 @@ services:
       - MYSQL_DATABASE=${MYSQL_DB}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASS}
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.http.routers.nextcloud.entrypoints=web
+      - traefik.http.routers.nextcloud.rule=Host(`nextcloud.${DOMAIN}`)
+      - traefik.http.middlewares.nextcloud-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.nextcloud.middlewares=nextcloud-redirect
+      - traefik.http.routers.nextcloud-secure.entrypoints=websecure
+      - traefik.http.routers.nextcloud-secure.rule=Host(`nextcloud.${DOMAIN}`)
+      - traefik.http.routers.nextcloud-secure.tls=true
+      - traefik.http.services.nextcloud-service.loadbalancer.server.port=${PORT_1_INT}
+      # flame labels
+      - flame.type=app
+      - flame.name=nextcloud
+      - flame.url=https://nextcloud.${DOMAIN}/
+      - flame.icon=cloud
 networks:
   main:
     name: main

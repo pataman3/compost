@@ -10,8 +10,6 @@ services:
       - main
     command: --transaction-isolation=READ-COMMITTED --log-bin=binlog --binlog-format=ROW
     environment:
-      - PUID=1000
-      - PGID=1000
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASS}
       - MYSQL_DATABASE=${MYSQL_DB}
       - MYSQL_USER=${MYSQL_USER}
@@ -37,6 +35,8 @@ services:
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASS}
       - NEXTCLOUD_TRUSTED_DOMAINS=nextcloud.${DOMAIN} ${MAIN_SUBNET}
+      - NEXTCLOUD_ADMIN_USER=${NEXTCLOUD_USER}
+      - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_PASS}
     labels:
       # traefik labels
       - traefik.enable=true

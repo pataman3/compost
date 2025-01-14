@@ -1,0 +1,34 @@
+services:
+  silverbullet:
+    container_name: silverbullet
+    image: zefhemel/silverbullet:latest
+    pull_policy: always
+    restart: unless-stopped
+    volumes:
+      - /config/silverbullet:/space
+    networks:
+      - main
+    ports:
+      - ${PORT_1_EXT}:${PORT_1_INT}
+    environment:
+      - SB_USER=${USER}:${PASS}
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.http.routers.silverbullet.entrypoints=web
+      - traefik.http.routers.silverbullet.rule=Host(`silverbullet.${DOMAIN}`)
+      - traefik.http.middlewares.silverbullet-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.silverbullet.middlewares=silverbullet-redirect
+      - traefik.http.routers.silverbullet-secure.entrypoints=websecure
+      - traefik.http.routers.silverbullet-secure.rule=Host(`silverbullet.${DOMAIN}`)
+      - traefik.http.routers.silverbullet-secure.tls=true
+      - traefik.http.services.silverbullet-service.loadbalancer.server.port=${PORT_1_INT}
+      # flame labels
+      - flame.type=app
+      - flame.name=silverbullet
+      - flame.url=https://silverbullet.${DOMAIN}/
+      - flame.icon=note-multiple
+networks:
+  main:
+    name: main
+    external: true

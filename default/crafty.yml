@@ -33,6 +33,7 @@ services:
       - traefik.http.routers.crafty-secure.rule=Host(`crafty.${DOMAIN}`)
       - traefik.http.routers.crafty-secure.tls=true
       - traefik.http.services.crafty-service.loadbalancer.server.port=${PORT_1_INT}
+      - traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https
       # flame labels
       - flame.type=app
       - flame.name=crafty

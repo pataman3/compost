@@ -14,7 +14,7 @@ services:
       - main
     ports:
       - ${PORT_1_EXT}:${PORT_1_INT}
-      - ${PORT_2_EXT}:${PORT_2_INT}
+      #- ${PORT_2_EXT}:${PORT_2_INT}
       - ${PORT_3_EXT}:${PORT_3_INT}
       - ${PORT_4_EXT}:${PORT_4_INT}
       - ${PORT_5_EXT}:${PORT_5_INT}

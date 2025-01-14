@@ -5,7 +5,7 @@ services:
     pull_policy: always
     restart: unless-stopped
     volumes:
-      - /config/silverbullet:/space
+      - /libraries/notes:/space
     networks:
       - main
     ports:
@@ -30,7 +30,7 @@ services:
       - flame.type=app
       - flame.name=silverbullet
       - flame.url=https://silverbullet.${DOMAIN}/
-      - flame.icon=note-multiple
+      - flame.icon=note
 networks:
   main:
     name: main

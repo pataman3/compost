@@ -1,0 +1,36 @@
+services:
+  actual:
+    container_name: actual
+    image: docker.io/actualbudget/actual-server:latest
+    pull_policy: always
+    restart: unless-stopped
+    volumes:
+      - /config/actual:/data
+    networks:
+      - main
+    ports:
+      - ${PORT_1_EXT}:${PORT_1_INT}
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=US/Eastern
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.http.routers.actual.entrypoints=web
+      - traefik.http.routers.actual.rule=Host(`actual.${DOMAIN}`)
+      - traefik.http.middlewares.actual-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.actual.middlewares=actual-redirect
+      - traefik.http.routers.actual-secure.entrypoints=websecure
+      - traefik.http.routers.actual-secure.rule=Host(`actual.${DOMAIN}`)
+      - traefik.http.routers.actual-secure.tls=true
+      - traefik.http.services.actual-service.loadbalancer.server.port=${PORT_1_INT}
+      # flame labels
+      - flame.type=app
+      - flame.name=actual
+      - flame.url=https://actual.${DOMAIN}/
+      - flame.icon=finance
+networks:
+  main:
+    name: main
+    external: true

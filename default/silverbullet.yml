@@ -11,6 +11,9 @@ services:
     ports:
       - ${PORT_1_EXT}:${PORT_1_INT}
     environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=US/Eastern
       - SB_USER=${USER}:${PASS}
     labels:
       # traefik labels

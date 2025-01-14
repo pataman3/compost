@@ -1,6 +1,6 @@
 services:
   mariadb-nextcloud:
-    container_name: nextcloud
+    container_name: mariadb-nextcloud
     image: mariadb:10.6
     pull_policy: always
     restart: unless-stopped

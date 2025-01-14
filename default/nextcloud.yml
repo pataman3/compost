@@ -32,7 +32,7 @@ services:
       - MYSQL_DATABASE=${MYSQL_DB}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASS}
-      - NEXTCLOUD_TRUSTED_DOMAINS=https://nextcloud.${DOMAIN},${IP}:443
+      - NEXTCLOUD_TRUSTED_DOMAINS=${MAIN_SUBNET}
     labels:
       # traefik labels
       - traefik.enable=true

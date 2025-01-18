@@ -1,0 +1,37 @@
+services:
+  tachidesk:
+    container_name: tachidesk
+    image: ghcr.io/suwayomi/tachidesk:latest
+    pull_policy: always
+    restart: unless-stopped
+    volumes:
+      - /libraries/downloads/clients/tachidesk:/home/suwayomi/.local/share/Tachidesk/downloads # order matters
+      - /libraries/media/comics:/home/suwayomi/.local/share/Tachidesk
+    networks:
+      - main
+    ports:
+      - ${PORT_1_EXT}:${PORT_1_INT}
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=US/Eastern
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.http.routers.suwayomi.entrypoints=web
+      - traefik.http.routers.suwayomi.rule=Host(`suwayomi.${DOMAIN}`)
+      - traefik.http.middlewares.suwayomi-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.suwayomi.middlewares=suwayomi-redirect
+      - traefik.http.routers.suwayomi-secure.entrypoints=websecure
+      - traefik.http.routers.suwayomi-secure.rule=Host(`suwayomi.${DOMAIN}`)
+      - traefik.http.routers.suwayomi-secure.tls=true
+      - traefik.http.services.suwayomi-service.loadbalancer.server.port=${PORT_1_INT}
+      # flame labels
+      - flame.type=app
+      - flame.name=suwayomi
+      - flame.url=https://suwayomi.${DOMAIN}/
+      - flame.icon=thought-bubble
+networks:
+  main:
+    name: main
+    external: true

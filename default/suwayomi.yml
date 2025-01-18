@@ -4,9 +4,9 @@ services:
     image: ghcr.io/suwayomi/tachidesk:latest
     pull_policy: always
     restart: unless-stopped
-    volumes:
-      - /libraries/downloads/clients/tachidesk:/home/suwayomi/.local/share/Tachidesk/downloads # order matters
-      - /libraries/media/comics:/home/suwayomi/.local/share/Tachidesk
+    volumes: # use keiyoushi extensions for sources
+      - /config/suwayomi/downloads:/home/suwayomi/.local/share/Tachidesk/downloads # order matters
+      - /config/suwayomi:/home/suwayomi/.local/share/Tachidesk
     networks:
       - main
     ports:

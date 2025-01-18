@@ -1,6 +1,6 @@
 services:
-  tachidesk:
-    container_name: tachidesk
+  suwayomi:
+    container_name: suwayomi
     image: ghcr.io/suwayomi/tachidesk:latest
     pull_policy: always
     restart: unless-stopped

@@ -1,0 +1,40 @@
+services:
+  kavita:
+    container_name: kavita
+    image: jvmilazz0/kavita:latest
+    pull_policy: always
+    restart: unless-stopped
+    volumes:
+      - /config/kavita:/kavita/config
+      - /libraries/media/books:/books
+      - /libraries/media/comics:/comics
+      - /libraries/media/manga:/manga
+    networks:
+      - main
+    ports:
+      - ${PORT_1_EXT}:${PORT_1_INT}
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=US/Eastern
+      - DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=true
+    labels:
+      # traefik labels
+      - traefik.enable=true
+      - traefik.http.routers.kavita.entrypoints=web
+      - traefik.http.routers.kavita.rule=Host(`kavita.${DOMAIN}`)
+      - traefik.http.middlewares.kavita-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.kavita.middlewares=kavita-redirect
+      - traefik.http.routers.kavita-secure.entrypoints=websecure
+      - traefik.http.routers.kavita-secure.rule=Host(`kavita.${DOMAIN}`)
+      - traefik.http.routers.kavita-secure.tls=true
+      - traefik.http.services.kavita-service.loadbalancer.server.port=${PORT_1_INT}
+      # flame labels
+      - flame.type=app
+      - flame.name=kavita
+      - flame.url=https://kavita.${DOMAIN}/
+      - flame.icon=book-multiple
+networks:
+  main:
+    name: main
+    external: true

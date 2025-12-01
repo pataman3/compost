@@ -1,4 +1,11 @@
+# clients.yml
+
 services:
+
+################################################################################
+##### QBITTORRENT
+################################################################################
+
   qbittorrent:
     container_name: qbittorrent
     image: lscr.io/linuxserver/qbittorrent:latest
@@ -28,6 +35,11 @@ services:
       - flame.name=qbittorrent
       - flame.url=https://qbittorrent.${DOMAIN}/
       - flame.icon=download
+
+################################################################################
+##### SABNZBD
+################################################################################
+
   sabnzbd:
     container_name: sabnzbd
     image: lscr.io/linuxserver/sabnzbd:latest

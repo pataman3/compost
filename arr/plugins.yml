@@ -1,4 +1,11 @@
+# plugins.yml
+
 services:
+
+################################################################################
+##### RECYCLARR
+################################################################################
+
   recyclarr:
     container_name: recyclarr
     image: ghcr.io/recyclarr/recyclarr:latest
@@ -8,6 +15,11 @@ services:
       - /config/recyclarr:/config
     environment:
       - TZ=${TZ}
+
+################################################################################
+##### UNPACKERR
+################################################################################
+
   unpackerr:
     container_name: unpackerr
     image: ghcr.io/hotio/unpackerr:latest

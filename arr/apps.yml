@@ -1,4 +1,11 @@
+# apps.yml
+
 services:
+
+################################################################################
+##### BAZARR
+################################################################################
+
   bazarr:
     container_name: bazarr
     image: lscr.io/linuxserver/bazarr:latest
@@ -27,6 +34,11 @@ services:
       - flame.name=bazarr
       - flame.url=https://bazarr.${DOMAIN}/
       - flame.icon=subtitles
+
+################################################################################
+##### LIDARR
+################################################################################
+
   lidarr:
     container_name: lidarr
     image: lscr.io/linuxserver/lidarr:latest
@@ -57,6 +69,11 @@ services:
       - flame.name=lidarr
       - flame.url=https://lidarr.${DOMAIN}/
       - flame.icon=music
+
+################################################################################
+##### PROWLARR
+################################################################################
+
   prowlarr:
     container_name: prowlarr
     image: lscr.io/linuxserver/prowlarr:latest
@@ -84,6 +101,11 @@ services:
       - flame.name=prowlarr
       - flame.url=https://prowlarr.${DOMAIN}/
       - flame.icon=file-find
+
+################################################################################
+##### RADARR (1080)
+################################################################################
+
   radarr-1080:
     container_name: radarr-1080
     image: lscr.io/linuxserver/radarr:latest
@@ -114,6 +136,11 @@ services:
       - flame.name=radarr-1080
       - flame.url=https://radarr-1080.${DOMAIN}/
       - flame.icon=movie
+
+################################################################################
+##### RADARR (2160)
+################################################################################
+
   radarr-2160:
     container_name: radarr-2160
     image: lscr.io/linuxserver/radarr:latest
@@ -144,6 +171,11 @@ services:
       - flame.name=radarr-2160
       - flame.url=https://radarr-2160.${DOMAIN}/
       - flame.icon=movie
+
+################################################################################
+##### RADARR (ANIME)
+################################################################################
+
   radarr-anime:
     container_name: radarr-anime
     image: lscr.io/linuxserver/radarr:latest
@@ -174,6 +206,11 @@ services:
       - flame.name=radarr-anime
       - flame.url=https://radarr-anime.${DOMAIN}/
       - flame.icon=movie
+
+################################################################################
+##### READARR
+################################################################################
+
   readarr:
     container_name: readarr
     image: lscr.io/linuxserver/readarr:develop
@@ -204,6 +241,11 @@ services:
       - flame.name=readarr
       - flame.url=https://readarr.${DOMAIN}/
       - flame.icon=book-open-page-variant
+
+################################################################################
+##### SONARR (1080)
+################################################################################
+
   sonarr-1080:
     container_name: sonarr-1080
     image: lscr.io/linuxserver/sonarr:latest
@@ -234,6 +276,11 @@ services:
       - flame.name=sonarr-1080
       - flame.url=https://sonarr-1080.${DOMAIN}/
       - flame.icon=television-classic
+
+################################################################################
+##### SONARR (2160)
+################################################################################
+
   sonarr-2160:
     container_name: sonarr-2160
     image: lscr.io/linuxserver/sonarr:latest
@@ -264,6 +311,11 @@ services:
       - flame.name=sonarr-2160
       - flame.url=https://sonarr-2160.${DOMAIN}/
       - flame.icon=television-classic
+
+################################################################################
+##### SONARR (ANIME)
+################################################################################
+
   sonarr-anime:
     container_name: sonarr-anime
     image: lscr.io/linuxserver/sonarr:latest

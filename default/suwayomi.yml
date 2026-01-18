@@ -1,36 +1,43 @@
 services:
+
+################################################################################
+##### suwayomi
+################################################################################
+
   suwayomi:
     container_name: suwayomi
     image: ghcr.io/suwayomi/tachidesk:latest
     pull_policy: always
     restart: unless-stopped
-    volumes: # use keiyoushi extensions for sources
-      - /config/suwayomi/downloads:/home/suwayomi/.local/share/Tachidesk/downloads # order matters
-      - /config/suwayomi:/home/suwayomi/.local/share/Tachidesk
     networks:
       - main
-    ports:
-      - ${PORT_1_EXT}:${PORT_1_INT}
+#   ports:
+#     - ${SUWAYOMI__PORT_EXT}:${SUWAYOMI__PORT_INT}
+    volumes:   # use keiyoushi extensions for sources
+      - /config/suwayomi/downloads:/home/suwayomi/.local/share/Tachidesk/downloads   # order matters
+      - /config/suwayomi:/home/suwayomi/.local/share/Tachidesk
     environment:
+      # ct envvars
       - PUID=1000
       - PGID=1000
-      - TZ=US/Eastern
+      - TZ=${TIMEZONE}
+      # suwayomi envvars
     labels:
       # traefik labels
       - traefik.enable=true
-      - traefik.http.routers.suwayomi.entrypoints=web
+      - traefik.http.routers.suwayomi.entrypoints=websecure
+      - traefik.http.routers.suwayomi.middlewares=authelia
       - traefik.http.routers.suwayomi.rule=Host(`suwayomi.${DOMAIN}`)
-      - traefik.http.middlewares.suwayomi-redirect.redirectscheme.scheme=https
-      - traefik.http.routers.suwayomi.middlewares=suwayomi-redirect
-      - traefik.http.routers.suwayomi-secure.entrypoints=websecure
-      - traefik.http.routers.suwayomi-secure.rule=Host(`suwayomi.${DOMAIN}`)
-      - traefik.http.routers.suwayomi-secure.tls=true
-      - traefik.http.services.suwayomi-service.loadbalancer.server.port=${PORT_1_INT}
+      - traefik.http.routers.suwayomi.tls.certresolver=cloudflare
+      - traefik.http.services.suwayomi.loadbalancer.server.port=${SUWAYOMI__PORT_INT}
       # flame labels
       - flame.type=app
       - flame.name=suwayomi
       - flame.url=https://suwayomi.${DOMAIN}/
       - flame.icon=thought-bubble
+
+##### networking
+
 networks:
   main:
     name: main

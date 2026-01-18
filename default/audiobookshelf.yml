@@ -15,7 +15,7 @@ services:                                                                       
     restart: unless-stopped                                                         # static
     networks:                                                                       #--------------#
       - main                                                                       ### <--
-#   ports:                                                                          # DEBUG
+#   ports:                                                                          #--------------#
 #     - ${AUDIOBOOKSHELF__PORT_EXT}:${AUDIOBOOKSHELF__PORT_INT}                     # DEBUG
     volumes:                                                                        #--------------#
       - /config/audiobookshelf/config:/config                                      ### <--

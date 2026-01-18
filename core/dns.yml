@@ -1,5 +1,9 @@
 services:
 
+################################################################################
+##### pihole
+################################################################################
+
   pihole:
     container_name: pihole
     image: pihole/pihole:latest
@@ -28,19 +32,20 @@ services:
     labels:
       # traefik labels
       - traefik.enable=true
-      - traefik.http.routers.pihole.entrypoints=web
+      - traefik.http.routers.pihole.entrypoints=websecure
+#     - traefik.http.routers.pihole.middlewares=authelia   # let's not restrict forever
       - traefik.http.routers.pihole.rule=Host(`pihole.${DOMAIN}`)
-      - traefik.http.middlewares.pihole-redirect.redirectscheme.scheme=https
-      - traefik.http.routers.pihole.middlewares=pihole-redirect
-      - traefik.http.routers.pihole-secure.entrypoints=websecure
-      - traefik.http.routers.pihole-secure.rule=Host(`pihole.${DOMAIN}`)
-      - traefik.http.routers.pihole-secure.tls=true
-      - traefik.http.services.pihole-service.loadbalancer.server.port=${PIHOLE__PORT_2_INT}
+      - traefik.http.routers.pihole.tls.certresolver=cloudflare
+      - traefik.http.services.pihole.loadbalancer.server.port=${PIHOLE__PORT_2_INT}
       # flame labels
       - flame.type=app
       - flame.name=pihole
       - flame.url=https://pihole.${DOMAIN}/admin
       - flame.icon=dns
+
+################################################################################
+##### unbound
+################################################################################
 
   unbound:
     container_name: unbound
@@ -57,6 +62,9 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=${TIMEZONE}
+      # unbound envvars
+
+##### networking
 
 networks:
   main:

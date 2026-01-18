@@ -1,35 +1,33 @@
-# clients.yml
-
 services:
 
 ################################################################################
-##### QBITTORRENT
+##### qbittorent
 ################################################################################
 
   qbittorrent:
     container_name: qbittorrent
     image: lscr.io/linuxserver/qbittorrent:latest
+    pull_policy: always
     restart: unless-stopped
     network_mode: container:gluetun
     volumes:
       - /config/qbittorrent:/config
       - /libraries/downloads/torrents:/torrents
     environment:
-      - PGID=1000
+      # ct envvars
       - PUID=1000
-      - TZ=${TZ}
-      - WEBUI_PORT=${QBITTORRENT_PORT_INT}
+      - PGID=1000
+      - TZ=${TIMEZONE}
+      # qbittorrent envvars
+      - WEBUI_PORT=${QBITTORRENT__PORT_1_INT}
     labels:
       # traefik labels
       - traefik.enable=true
-      - traefik.http.routers.qbittorrent.entrypoints=web
+      - traefik.http.routers.qbittorrent.entrypoints=websecure
+      - traefik.http.routers.qbittorrent.middlewares=authelia
       - traefik.http.routers.qbittorrent.rule=Host(`qbittorrent.${DOMAIN}`)
-      - traefik.http.middlewares.qbittorrent-redirect.redirectscheme.scheme=https
-      - traefik.http.routers.qbittorrent.middlewares=qbittorrent-redirect
-      - traefik.http.routers.qbittorrent-secure.entrypoints=websecure
-      - traefik.http.routers.qbittorrent-secure.rule=Host(`qbittorrent.${DOMAIN}`)
-      - traefik.http.routers.qbittorrent-secure.tls=true
-      - traefik.http.services.qbittorrent-service.loadbalancer.server.port=${QBITTORRENT_PORT_INT}
+      - traefik.http.routers.qbittorrent.tls.certresolver=cloudflare
+      - traefik.http.services.qbittorrent.loadbalancer.server.port=${QBITTORRENT__PORT_1_INT}
       # flame labels
       - flame.type=app
       - flame.name=qbittorrent
@@ -37,32 +35,33 @@ services:
       - flame.icon=download
 
 ################################################################################
-##### SABNZBD
+##### sabnzbd
 ################################################################################
 
   sabnzbd:
     container_name: sabnzbd
     image: lscr.io/linuxserver/sabnzbd:latest
+    pull_policy: always
     restart: unless-stopped
     network_mode: container:gluetun
     volumes:
       - /config/sabnzbd:/config
       - /libraries/downloads/usenet:/usenet
     environment:
+      # ct envvars
       - PUID=1000
       - PGID=1000
-      - TZ=${TZ}
+      - TZ=${TIMEZONE}
+      # sabnzbd envvars
     labels:
       # traefik labels
       - traefik.enable=true
-      - traefik.http.routers.sabnzbd.entrypoints=web
+      - traefik.enable=true
+      - traefik.http.routers.sabnzbd.entrypoints=websecure
+      - traefik.http.routers.sabnzbd.middlewares=authelia
       - traefik.http.routers.sabnzbd.rule=Host(`sabnzbd.${DOMAIN}`)
-      - traefik.http.middlewares.sabnzbd-redirect.redirectscheme.scheme=https
-      - traefik.http.routers.sabnzbd.middlewares=sabnzbd-redirect
-      - traefik.http.routers.sabnzbd-secure.entrypoints=websecure
-      - traefik.http.routers.sabnzbd-secure.rule=Host(`sabnzbd.${DOMAIN}`)
-      - traefik.http.routers.sabnzbd-secure.tls=true
-      - traefik.http.services.sabnzbd-service.loadbalancer.server.port=${SABNZBD_PORT_INT}
+      - traefik.http.routers.sabnzbd.tls.certresolver=cloudflare
+      - traefik.http.services.sabnzbd.loadbalancer.server.port=${SABNZBD__PORT_INT}
       # flame labels
       - flame.type=app
       - flame.name=sabnzbd

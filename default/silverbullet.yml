@@ -1,36 +1,42 @@
 services:
+
+################################################################################
+##### silverbullet
+################################################################################
+
   silverbullet:
     container_name: silverbullet
     image: zefhemel/silverbullet:latest
     pull_policy: always
     restart: unless-stopped
-    volumes:
-      - /libraries/notes:/space
     networks:
       - main
-    ports:
-      - ${PORT_1_EXT}:${PORT_1_INT}
+#   ports:
+#     - ${SILVERBULLET__PORT_EXT}:${SILVERBULLET__PORT_INT}
+    volumes:
+      - /libraries/notes:/space
     environment:
+      # ct envvars
       - PUID=1000
       - PGID=1000
-      - TZ=US/Eastern
-      # - SB_USER=${USER}:${PASS}
+      - TZ=${TIMEZONE}
+      # silverbullet envvars
     labels:
       # traefik labels
       - traefik.enable=true
-      - traefik.http.routers.silverbullet.entrypoints=web
-      - traefik.http.routers.silverbullet.rule=Host(`silverbullet.${DOMAIN}`)
-      - traefik.http.middlewares.silverbullet-redirect.redirectscheme.scheme=https
-      - traefik.http.routers.silverbullet.middlewares=silverbullet-redirect
-      - traefik.http.routers.silverbullet-secure.entrypoints=websecure
-      - traefik.http.routers.silverbullet-secure.rule=Host(`silverbullet.${DOMAIN}`)
-      - traefik.http.routers.silverbullet-secure.tls=true
-      - traefik.http.services.silverbullet-service.loadbalancer.server.port=${PORT_1_INT}
+      - traefik.http.routers.silverbullet.entrypoints=websecure
+      - traefik.http.routers.silverbullet.middlewares=authelia
+      - traefik.http.routers.silverbullet.rule=Host(`bullet.${DOMAIN}`)
+      - traefik.http.routers.silverbullet.tls.certresolver=cloudflare
+      - traefik.http.services.silverbullet.loadbalancer.server.port=${SILVERBULLET__PORT_INT}
       # flame labels
       - flame.type=app
       - flame.name=silverbullet
-      - flame.url=https://silverbullet.${DOMAIN}/
+      - flame.url=https://bullet.${DOMAIN}/
       - flame.icon=note
+
+##### networking
+
 networks:
   main:
     name: main

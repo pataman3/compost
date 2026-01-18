@@ -1,0 +1,55 @@
+services:                                                                           #--------------#
+
+# to-do:
+# - crafty-controller
+#   - fix ports
+
+####################################################################################################
+##### crafty-controller
+####################################################################################################
+
+  crafty-controller:                                                                          ### <--
+    image: registry.gitlab.com/crafty-controller/crafty-4:latest                   ### <--
+    container_name: ${SERVICE}                                                      # static
+    pull_policy: always                                                             # static
+    restart: unless-stopped                                                         # static
+    networks:                                                                       #--------------#
+      - main                                                                       ### <--
+    ports:                                                                          #--------------#
+      - ${CRAFTY__PORT_1_EXT}:${CRAFTY__PORT_1_INT}                                 # DEBUG
+      - ${CRAFTY__PORT_2_EXT}:${CRAFTY__PORT_2_INT}                                 # DEBUG
+      - ${CRAFTY__PORT_3_EXT}:${CRAFTY__PORT_3_INT}                                 # DEBUG
+      - ${CRAFTY__PORT_4_EXT}:${CRAFTY__PORT_4_INT}                                 # DEBUG
+      - ${CRAFTY__PORT_5_EXT}:${CRAFTY__PORT_5_INT}                                 # DEBUG
+    volumes:                                                                        #--------------#
+      - /config/crafty/config:/crafty/app/config                                   ### <--
+      - /config/crafty/logs:/crafty/logs                                           ### <--
+      - /libraries/games/minecraft/backups:/crafty/backups                         ### <--
+      - /libraries/games/minecraft/servers:/crafty/servers                         ### <--
+      - /libraries/games/minecraft/import:/crafty/import                           ### <--
+    environment:                                                                    #--------------#
+      #-- docker -------------------------------------------------------------------#--------------#
+      - PUID=1000                                                                   # static
+      - PGID=1000                                                                   # static
+      - TZ=${TIMEZONE}                                                              # static
+      #-- crafty -------------------------------------------------------------------#--------------#
+    labels:                                                                         #--------------#
+      #-- traefik ------------------------------------------------------------------#--------------#
+      - traefik.enable=true                                                         # static
+      - traefik.http.routers.${SERVICE}.entrypoints=websecure                       # static
+#     - traefik.http.routers.${SERVICE}.middlewares=authelia                        # static
+      - traefik.http.routers.${SERVICE}.rule=Host(`${SUBDOMAIN}.${DOMAIN}`)         # static
+      - traefik.http.routers.${SERVICE}.tls.certresolver=cloudflare                 # static
+      - traefik.http.services.${SERVICE}.loadbalancer.server.port=${SERVICE_PORT}   # static
+      #-- flame --------------------------------------------------------------------#--------------#
+      - flame.type=app                                                              # static
+      - flame.name=${SERVICE}                                                       # static
+      - flame.url=https://${SUBDOMAIN}.${DOMAIN}/                                   # static
+      - flame.icon=${ICON}                                                          # static
+
+##### networking ###################################################################################
+
+networks:                                                                           #--------------#
+  main:                                                                            ### <--
+    name: main                                                                     ### <--
+    external: true                                                                  # static

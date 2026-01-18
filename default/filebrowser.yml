@@ -9,15 +9,14 @@ services:
     container_name: ${SERVICE}                                                      # static
     pull_policy: always                                                             # static
     restart: unless-stopped                                                         # static
-    networks: main                                                                  # static
+    networks:                                                                       # static
+      - main                                                                        # static
 #   ports:                                                                          ### DEBUG
 #     - ${FILEBROWSER__PORT_EXT}:${FILEBROWSER__PORT_INT}                           ### DEBUG
     volumes:
       - /config/filebrowser/filebrowser.db:/database.db
       - /libraries:/srv
     environment:
-      #-- traefik ----------------------------------------------------------------------------------
-      - SERVICE_PORT=${FILEBROWSER__PORT_INT}
       #-- docker -----------------------------------------------------------------------------------
       - PUID=1000                                                                   # static
       - PGID=1000                                                                   # static

@@ -1,38 +1,47 @@
 services:
+
+# to-do: setup audiobookshelf oidc
+
+################################################################################
+##### audiobookshelf
+################################################################################
+
   audiobookshelf:
     container_name: audiobookshelf
     image: ghcr.io/advplyr/audiobookshelf:latest
     pull_policy: always
     restart: unless-stopped
+    networks:
+      - main
+#   ports:
+#     - ${AUDIOBOOKSHELF__PORT_EXT}:${AUDIOBOOKSHELF__PORT_INT}
     volumes:
       - /config/audiobookshelf/config:/config
       - /config/audiobookshelf/metadata:/metadata
       - /libraries/media:/media
-    networks:
-      - arr
-    ports:
-      - ${AUDIOBOOKSHELF_PORT_1_EXT}:${AUDIOBOOKSHELF_PORT_1_INT}
     environment:
+      # ct envvars
       - PUID=1000
       - PGID=1000
-      - TZ=US/Eastern
+      - TZ=${TIMEZONE}
+      # audiobookshelf envvars
     labels:
       # traefik labels
       - traefik.enable=true
-      - traefik.http.routers.audiobookshelf.entrypoints=web
-      - traefik.http.routers.audiobookshelf.rule=Host(`audiobookshelf.${DOMAIN}`)
-      - traefik.http.middlewares.audiobookshelf-redirect.redirectscheme.scheme=https
-      - traefik.http.routers.audiobookshelf.middlewares=audiobookshelf-redirect
-      - traefik.http.routers.audiobookshelf-secure.entrypoints=websecure
-      - traefik.http.routers.audiobookshelf-secure.rule=Host(`audiobookshelf.${DOMAIN}`)
-      - traefik.http.routers.audiobookshelf-secure.tls=true
-      - traefik.http.services.audiobookshelf-service.loadbalancer.server.port=${AUDIOBOOKSHELF_PORT_1_INT}
+      - traefik.http.routers.audiobookshelf.entrypoints=websecure
+#     - traefik.http.routers.audiobookshelf.middlewares=authelia
+      - traefik.http.routers.audiobookshelf.rule=Host(`shelf.${DOMAIN}`)
+      - traefik.http.routers.audiobookshelf.tls.certresolver=cloudflare
+      - traefik.http.services.audiobookshelf.loadbalancer.server.port=${AUDIOBOOKSHELF__PORT_INT}
       # flame labels
       - flame.type=app
       - flame.name=audiobookshelf
-      - flame.url=https://audiobookshelf.${DOMAIN}/
+      - flame.url=https://shelf.${DOMAIN}/
       - flame.icon=book-open-page-variant
+
+##### networking
+
 networks:
-  arr:
-    name: arr
+  main:
+    name: main
     external: true

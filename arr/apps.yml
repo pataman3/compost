@@ -206,41 +206,6 @@ services:
       - flame.icon=movie
 
 ################################################################################
-##### readarr
-################################################################################
-
-  readarr:
-    container_name: readarr
-    image: lscr.io/linuxserver/readarr:develop
-    pull_policy: always
-    restart: unless-stopped
-    network_mode: container:gluetun
-    volumes:
-      - /config/readarr:/config
-      - /libraries/media/books:/books
-      - /libraries/downloads/torrents/complete/readarr:/torrents/complete/readarr
-      - /libraries/downloads/usenet/complete/readarr:/usenet/complete/readarr
-    environment:
-      # ct envvars
-      - PUID=1000
-      - PGID=1000
-      - TZ=${TIMEZONE}
-      # readarr envvars
-    labels:
-      # traefik labels
-      - traefik.enable=true
-      - traefik.http.routers.readarr.entrypoints=websecure
-      - traefik.http.routers.readarr.middlewares=authelia
-      - traefik.http.routers.readarr.rule=Host(`readarr.${DOMAIN}`)
-      - traefik.http.routers.readarr.tls.certresolver=cloudflare
-      - traefik.http.services.readarr.loadbalancer.server.port=${READARR__PORT_INT}
-      # flame labels
-      - flame.type=app
-      - flame.name=readarr
-      - flame.url=https://readarr.${DOMAIN}/
-      - flame.icon=book-open-page-variant
-
-################################################################################
 ##### sonarr-1080
 ################################################################################
 

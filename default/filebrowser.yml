@@ -11,8 +11,8 @@ services:                                                                       
     restart: unless-stopped                                                         # static
     networks:                                                                       #--------------#
       - main                                                                       ### <--
-#   ports:                                                                         ### DEBUG
-#     - ${FILEBROWSER__PORT_EXT}:${FILEBROWSER__PORT_INT}                          ### DEBUG
+#   ports:                                                                          # DEBUG
+#     - ${FILEBROWSER__PORT_EXT}:${FILEBROWSER__PORT_INT}                           # DEBUG
     volumes:                                                                        #--------------#
       - /config/filebrowser/filebrowser.db:/database.db                            ### <--
       - /libraries:/srv                                                            ### <--

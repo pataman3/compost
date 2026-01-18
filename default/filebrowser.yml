@@ -10,7 +10,7 @@ services:
     pull_policy: always                                                             # static
     restart: unless-stopped                                                         # static
     networks:                                                                       # static
-      - main                                                                        # static
+      - ${NETWORK}                                                                  # static
 #   ports:                                                                          ### DEBUG
 #     - ${FILEBROWSER__PORT_EXT}:${FILEBROWSER__PORT_INT}                           ### DEBUG
     volumes:
@@ -38,7 +38,7 @@ services:
 
 ##### networking ###################################################################################
 
-networks:
-  main:
-    name: main
-    external: true
+networks:                                                                           # static
+  ${NETWORK}:                                                                       # static                    
+    name: ${NETWORK}                                                                # static
+    external: true                                                                  # static

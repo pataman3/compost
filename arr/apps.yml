@@ -1,34 +1,32 @@
-# apps.yml
-
 services:
 
 ################################################################################
-##### BAZARR
+##### bazarr
 ################################################################################
 
   bazarr:
     container_name: bazarr
     image: lscr.io/linuxserver/bazarr:latest
+    pull_policy: always
     restart: unless-stopped
     network_mode: container:gluetun
     volumes:
       - /config/bazarr:/config
       - /libraries:/libraries
     environment:
+      # ct envvars
       - PUID=1000
       - PGID=1000
-      - TZ=${TZ}
+      - TZ=${TIMEZONE}
+      # bazarr envvars
     labels:
       # traefik labels
       - traefik.enable=true
-      - traefik.http.routers.bazarr.entrypoints=web
+      - traefik.http.routers.bazarr.entrypoints=websecure
+      - traefik.http.routers.bazarr.middlewares=authelia
       - traefik.http.routers.bazarr.rule=Host(`bazarr.${DOMAIN}`)
-      - traefik.http.middlewares.bazarr-redirect.redirectscheme.scheme=https
-      - traefik.http.routers.bazarr.middlewares=bazarr-redirect
-      - traefik.http.routers.bazarr-secure.entrypoints=websecure
-      - traefik.http.routers.bazarr-secure.rule=Host(`bazarr.${DOMAIN}`)
-      - traefik.http.routers.bazarr-secure.tls=true
-      - traefik.http.services.bazarr-service.loadbalancer.server.port=${BAZARR_PORT_INT}
+      - traefik.http.routers.bazarr.tls.certresolver=cloudflare
+      - traefik.http.services.bazarr.loadbalancer.server.port=${BAZARR__PORT_INT}
       # flame labels
       - flame.type=app
       - flame.name=bazarr
@@ -36,12 +34,13 @@ services:
       - flame.icon=subtitles
 
 ################################################################################
-##### LIDARR
+##### lidarr
 ################################################################################
 
   lidarr:
     container_name: lidarr
     image: lscr.io/linuxserver/lidarr:latest
+    pull_policy: always
     restart: unless-stopped
     network_mode: container:gluetun
     volumes:
@@ -50,20 +49,19 @@ services:
       - /libraries/downloads/torrents/complete/lidarr:/torrents/complete/lidarr
       - /libraries/downloads/usenet/complete/lidarr:/usenet/complete/lidarr
     environment:
+      # ct envvars
       - PUID=1000
       - PGID=1000
-      - TZ=${TZ}
+      - TZ=${TIMEZONE}
+      # lidarr envvars
     labels:
       # traefik labels
       - traefik.enable=true
-      - traefik.http.routers.lidarr.entrypoints=web
+      - traefik.http.routers.lidarr.entrypoints=websecure
+      - traefik.http.routers.lidarr.middlewares=authelia
       - traefik.http.routers.lidarr.rule=Host(`lidarr.${DOMAIN}`)
-      - traefik.http.middlewares.lidarr-redirect.redirectscheme.scheme=https
-      - traefik.http.routers.lidarr.middlewares=lidarr-redirect
-      - traefik.http.routers.lidarr-secure.entrypoints=websecure
-      - traefik.http.routers.lidarr-secure.rule=Host(`lidarr.${DOMAIN}`)
-      - traefik.http.routers.lidarr-secure.tls=true
-      - traefik.http.services.lidarr-service.loadbalancer.server.port=${LIDARR_PORT_INT}
+      - traefik.http.routers.lidarr.tls.certresolver=cloudflare
+      - traefik.http.services.lidarr.loadbalancer.server.port=${LIDARR__PORT_INT}
       # flame labels
       - flame.type=app
       - flame.name=lidarr
@@ -71,31 +69,31 @@ services:
       - flame.icon=music
 
 ################################################################################
-##### PROWLARR
+##### prowlarr
 ################################################################################
 
   prowlarr:
     container_name: prowlarr
     image: lscr.io/linuxserver/prowlarr:latest
+    pull_policy: always
     restart: unless-stopped
     network_mode: container:gluetun
     volumes:
       - /config/prowlarr:/config
     environment:
+      # ct envvars
       - PUID=1000
       - PGID=1000
-      - TZ=${TZ}
+      - TZ=${TIMEZONE}
+      # prowlarr envvars
     labels:
       # traefik labels
       - traefik.enable=true
-      - traefik.http.routers.prowlarr.entrypoints=web
+      - traefik.http.routers.prowlarr.entrypoints=websecure
+      - traefik.http.routers.prowlarr.middlewares=authelia
       - traefik.http.routers.prowlarr.rule=Host(`prowlarr.${DOMAIN}`)
-      - traefik.http.middlewares.prowlarr-redirect.redirectscheme.scheme=https
-      - traefik.http.routers.prowlarr.middlewares=prowlarr-redirect
-      - traefik.http.routers.prowlarr-secure.entrypoints=websecure
-      - traefik.http.routers.prowlarr-secure.rule=Host(`prowlarr.${DOMAIN}`)
-      - traefik.http.routers.prowlarr-secure.tls=true
-      - traefik.http.services.prowlarr-service.loadbalancer.server.port=${PROWLARR_PORT_INT}
+      - traefik.http.routers.prowlarr.tls.certresolver=cloudflare
+      - traefik.http.services.prowlarr.loadbalancer.server.port=${PROWLARR__PORT_INT}
       # flame labels
       - flame.type=app
       - flame.name=prowlarr
@@ -103,12 +101,13 @@ services:
       - flame.icon=file-find
 
 ################################################################################
-##### RADARR (1080)
+##### radarr-1080
 ################################################################################
 
   radarr-1080:
     container_name: radarr-1080
     image: lscr.io/linuxserver/radarr:latest
+    pull_policy: always
     restart: unless-stopped
     network_mode: container:gluetun
     volumes:
@@ -117,20 +116,19 @@ services:
       - /libraries/downloads/torrents/complete/radarr-1080:/torrents/complete/radarr-1080
       - /libraries/downloads/usenet/complete/radarr-1080:/usenet/complete/radarr-1080
     environment:
+      # ct envvars
       - PUID=1000
       - PGID=1000
-      - TZ=${TZ}
+      - TZ=${TIMEZONE}
+      # radarr-1080 envvars
     labels:
       # traefik labels
       - traefik.enable=true
-      - traefik.http.routers.radarr-1080.entrypoints=web
+      - traefik.http.routers.radarr-1080.entrypoints=websecure
+      - traefik.http.routers.radarr-1080.middlewares=authelia
       - traefik.http.routers.radarr-1080.rule=Host(`radarr-1080.${DOMAIN}`)
-      - traefik.http.middlewares.radarr-1080-redirect.redirectscheme.scheme=https
-      - traefik.http.routers.radarr-1080.middlewares=radarr-1080-redirect
-      - traefik.http.routers.radarr-1080-secure.entrypoints=websecure
-      - traefik.http.routers.radarr-1080-secure.rule=Host(`radarr-1080.${DOMAIN}`)
-      - traefik.http.routers.radarr-1080-secure.tls=true
-      - traefik.http.services.radarr-1080-service.loadbalancer.server.port=${RADARR_1080_PORT_INT}
+      - traefik.http.routers.radarr-1080.tls.certresolver=cloudflare
+      - traefik.http.services.radarr-1080.loadbalancer.server.port=${RADARR_1080__PORT_INT}
       # flame labels
       - flame.type=app
       - flame.name=radarr-1080
@@ -138,12 +136,13 @@ services:
       - flame.icon=movie
 
 ################################################################################
-##### RADARR (2160)
+##### radarr-2160
 ################################################################################
 
   radarr-2160:
     container_name: radarr-2160
     image: lscr.io/linuxserver/radarr:latest
+    pull_policy: always
     restart: unless-stopped
     network_mode: container:gluetun
     volumes:
@@ -152,20 +151,19 @@ services:
       - /libraries/downloads/torrents/complete/radarr-2160:/torrents/complete/radarr-2160
       - /libraries/downloads/usenet/complete/radarr-2160:/usenet/complete/radarr-2160
     environment:
+      # ct envvars
       - PUID=1000
       - PGID=1000
-      - TZ=${TZ}
+      - TZ=${TIMEZONE}
+      # radarr-2160 envvars
     labels:
       # traefik labels
       - traefik.enable=true
-      - traefik.http.routers.radarr-2160.entrypoints=web
+      - traefik.http.routers.radarr-2160.entrypoints=websecure
+      - traefik.http.routers.radarr-2160.middlewares=authelia
       - traefik.http.routers.radarr-2160.rule=Host(`radarr-2160.${DOMAIN}`)
-      - traefik.http.middlewares.radarr-2160-redirect.redirectscheme.scheme=https
-      - traefik.http.routers.radarr-2160.middlewares=radarr-2160-redirect
-      - traefik.http.routers.radarr-2160-secure.entrypoints=websecure
-      - traefik.http.routers.radarr-2160-secure.rule=Host(`radarr-2160.${DOMAIN}`)
-      - traefik.http.routers.radarr-2160-secure.tls=true
-      - traefik.http.services.radarr-2160-service.loadbalancer.server.port=${RADARR_2160_PORT_INT}
+      - traefik.http.routers.radarr-2160.tls.certresolver=cloudflare
+      - traefik.http.services.radarr-2160.loadbalancer.server.port=${RADARR_2160__PORT_INT}
       # flame labels
       - flame.type=app
       - flame.name=radarr-2160
@@ -173,12 +171,13 @@ services:
       - flame.icon=movie
 
 ################################################################################
-##### RADARR (ANIME)
+##### radarr-anime
 ################################################################################
 
   radarr-anime:
     container_name: radarr-anime
     image: lscr.io/linuxserver/radarr:latest
+    pull_policy: always
     restart: unless-stopped
     network_mode: container:gluetun
     volumes:
@@ -187,20 +186,19 @@ services:
       - /libraries/downloads/torrents/complete/radarr-anime:/torrents/complete/radarr-anime
       - /libraries/downloads/usenet/complete/radarr-anime:/usenet/complete/radarr-anime
     environment:
+      # ct envvars
       - PUID=1000
       - PGID=1000
-      - TZ=${TZ}
+      - TZ=${TIMEZONE}
+      # radarr-anime envvars
     labels:
       # traefik labels
       - traefik.enable=true
-      - traefik.http.routers.radarr-anime.entrypoints=web
+      - traefik.http.routers.radarr-anime.entrypoints=websecure
+      - traefik.http.routers.radarr-anime.middlewares=authelia
       - traefik.http.routers.radarr-anime.rule=Host(`radarr-anime.${DOMAIN}`)
-      - traefik.http.middlewares.radarr-anime-redirect.redirectscheme.scheme=https
-      - traefik.http.routers.radarr-anime.middlewares=radarr-anime-redirect
-      - traefik.http.routers.radarr-anime-secure.entrypoints=websecure
-      - traefik.http.routers.radarr-anime-secure.rule=Host(`radarr-anime.${DOMAIN}`)
-      - traefik.http.routers.radarr-anime-secure.tls=true
-      - traefik.http.services.radarr-anime-service.loadbalancer.server.port=${RADARR_ANIME_PORT_INT}
+      - traefik.http.routers.radarr-anime.tls.certresolver=cloudflare
+      - traefik.http.services.radarr-anime.loadbalancer.server.port=${RADARR_ANIME__PORT_INT}
       # flame labels
       - flame.type=app
       - flame.name=radarr-anime
@@ -208,12 +206,13 @@ services:
       - flame.icon=movie
 
 ################################################################################
-##### READARR
+##### readarr
 ################################################################################
 
   readarr:
     container_name: readarr
     image: lscr.io/linuxserver/readarr:develop
+    pull_policy: always
     restart: unless-stopped
     network_mode: container:gluetun
     volumes:
@@ -222,20 +221,19 @@ services:
       - /libraries/downloads/torrents/complete/readarr:/torrents/complete/readarr
       - /libraries/downloads/usenet/complete/readarr:/usenet/complete/readarr
     environment:
+      # ct envvars
       - PUID=1000
       - PGID=1000
-      - TZ=${TZ}
+      - TZ=${TIMEZONE}
+      # readarr envvars
     labels:
       # traefik labels
       - traefik.enable=true
-      - traefik.http.routers.readarr.entrypoints=web
+      - traefik.http.routers.readarr.entrypoints=websecure
+      - traefik.http.routers.readarr.middlewares=authelia
       - traefik.http.routers.readarr.rule=Host(`readarr.${DOMAIN}`)
-      - traefik.http.middlewares.readarr-redirect.redirectscheme.scheme=https
-      - traefik.http.routers.readarr.middlewares=readarr-redirect
-      - traefik.http.routers.readarr-secure.entrypoints=websecure
-      - traefik.http.routers.readarr-secure.rule=Host(`readarr.${DOMAIN}`)
-      - traefik.http.routers.readarr-secure.tls=true
-      - traefik.http.services.readarr-service.loadbalancer.server.port=${READARR_PORT_INT}
+      - traefik.http.routers.readarr.tls.certresolver=cloudflare
+      - traefik.http.services.readarr.loadbalancer.server.port=${READARR__PORT_INT}
       # flame labels
       - flame.type=app
       - flame.name=readarr
@@ -243,12 +241,13 @@ services:
       - flame.icon=book-open-page-variant
 
 ################################################################################
-##### SONARR (1080)
+##### sonarr-1080
 ################################################################################
 
   sonarr-1080:
     container_name: sonarr-1080
     image: lscr.io/linuxserver/sonarr:latest
+    pull_policy: always
     restart: unless-stopped
     network_mode: container:gluetun
     volumes:
@@ -257,20 +256,19 @@ services:
       - /libraries/downloads/torrents/complete/sonarr-1080:/torrents/complete/sonarr-1080
       - /libraries/downloads/usenet/complete/sonarr-1080:/usenet/complete/sonarr-1080
     environment:
+      # ct envvars
       - PUID=1000
       - PGID=1000
-      - TZ=${TZ}
+      - TZ=${TIMEZONE}
+      # sonarr-1080 envvars
     labels:
       # traefik labels
       - traefik.enable=true
-      - traefik.http.routers.sonarr-1080.entrypoints=web
+      - traefik.http.routers.sonarr-1080.entrypoints=websecure
+      - traefik.http.routers.sonarr-1080.middlewares=authelia
       - traefik.http.routers.sonarr-1080.rule=Host(`sonarr-1080.${DOMAIN}`)
-      - traefik.http.middlewares.sonarr-1080-redirect.redirectscheme.scheme=https
-      - traefik.http.routers.sonarr-1080.middlewares=sonarr-1080-redirect
-      - traefik.http.routers.sonarr-1080-secure.entrypoints=websecure
-      - traefik.http.routers.sonarr-1080-secure.rule=Host(`sonarr-1080.${DOMAIN}`)
-      - traefik.http.routers.sonarr-1080-secure.tls=true
-      - traefik.http.services.sonarr-1080-service.loadbalancer.server.port=${SONARR_1080_PORT_INT}
+      - traefik.http.routers.sonarr-1080.tls.certresolver=cloudflare
+      - traefik.http.services.sonarr-1080.loadbalancer.server.port=${SONARR_1080__PORT_INT}
       # flame labels
       - flame.type=app
       - flame.name=sonarr-1080
@@ -278,12 +276,13 @@ services:
       - flame.icon=television-classic
 
 ################################################################################
-##### SONARR (2160)
+##### sonarr-2160
 ################################################################################
 
   sonarr-2160:
     container_name: sonarr-2160
     image: lscr.io/linuxserver/sonarr:latest
+    pull_policy: always
     restart: unless-stopped
     network_mode: container:gluetun
     volumes:
@@ -292,20 +291,19 @@ services:
       - /libraries/downloads/torrents/complete/sonarr-2160:/torrents/complete/sonarr-2160
       - /libraries/downloads/usenet/complete/sonarr-2160:/usenet/complete/sonarr-2160
     environment:
+      # ct envvars
       - PUID=1000
       - PGID=1000
-      - TZ=${TZ}
+      - TZ=${TIMEZONE}
+      # sonarr-2160 envvars
     labels:
       # traefik labels
       - traefik.enable=true
-      - traefik.http.routers.sonarr-2160.entrypoints=web
+      - traefik.http.routers.sonarr-2160.entrypoints=websecure
+      - traefik.http.routers.sonarr-2160.middlewares=authelia
       - traefik.http.routers.sonarr-2160.rule=Host(`sonarr-2160.${DOMAIN}`)
-      - traefik.http.middlewares.sonarr-2160-redirect.redirectscheme.scheme=https
-      - traefik.http.routers.sonarr-2160.middlewares=sonarr-2160-redirect
-      - traefik.http.routers.sonarr-2160-secure.entrypoints=websecure
-      - traefik.http.routers.sonarr-2160-secure.rule=Host(`sonarr-2160.${DOMAIN}`)
-      - traefik.http.routers.sonarr-2160-secure.tls=true
-      - traefik.http.services.sonarr-2160-service.loadbalancer.server.port=${SONARR_2160_PORT_INT}
+      - traefik.http.routers.sonarr-2160.tls.certresolver=cloudflare
+      - traefik.http.services.sonarr-2160.loadbalancer.server.port=${SONARR_2160__PORT_INT}
       # flame labels
       - flame.type=app
       - flame.name=sonarr-2160
@@ -313,12 +311,13 @@ services:
       - flame.icon=television-classic
 
 ################################################################################
-##### SONARR (ANIME)
+##### sonarr-anime
 ################################################################################
 
   sonarr-anime:
     container_name: sonarr-anime
     image: lscr.io/linuxserver/sonarr:latest
+    pull_policy: always
     restart: unless-stopped
     network_mode: container:gluetun
     volumes:
@@ -327,20 +326,19 @@ services:
       - /libraries/downloads/torrents/complete/sonarr-anime:/torrents/complete/sonarr-anime
       - /libraries/downloads/usenet/complete/sonarr-anime:/usenet/complete/sonarr-anime
     environment:
+      # ct envvars
       - PUID=1000
       - PGID=1000
-      - TZ=${TZ}
+      - TZ=${TIMEZONE}
+      # sonarr-anime envvars
     labels:
       # traefik labels
       - traefik.enable=true
-      - traefik.http.routers.sonarr-anime.entrypoints=web
+      - traefik.http.routers.sonarr-anime.entrypoints=websecure
+      - traefik.http.routers.sonarr-anime.middlewares=authelia
       - traefik.http.routers.sonarr-anime.rule=Host(`sonarr-anime.${DOMAIN}`)
-      - traefik.http.middlewares.sonarr-anime-redirect.redirectscheme.scheme=https
-      - traefik.http.routers.sonarr-anime.middlewares=sonarr-anime-redirect
-      - traefik.http.routers.sonarr-anime-secure.entrypoints=websecure
-      - traefik.http.routers.sonarr-anime-secure.rule=Host(`sonarr-anime.${DOMAIN}`)
-      - traefik.http.routers.sonarr-anime-secure.tls=true
-      - traefik.http.services.sonarr-anime-service.loadbalancer.server.port=${SONARR_ANIME_PORT_INT}
+      - traefik.http.routers.sonarr-anime.tls.certresolver=cloudflare
+      - traefik.http.services.sonarr-anime.loadbalancer.server.port=${SONARR_ANIME__PORT_INT}
       # flame labels
       - flame.type=app
       - flame.name=sonarr-anime

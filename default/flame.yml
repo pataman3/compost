@@ -28,7 +28,7 @@ services:
       - traefik.enable=true
       - traefik.http.routers.flame.entrypoints=websecure
 #     - traefik.http.routers.filebrowser.middlewares=authelia   # let's not restrict for now
-      - traefik.http.routers.flame.rule=Host(`flame.${DOMAIN}`)
+      - traefik.http.routers.flame.rule=Host(`home.${DOMAIN}`)
       - traefik.http.routers.flame.tls.certresolver=cloudflare
       - traefik.http.services.flame.loadbalancer.server.port=${FLAME__PORT_INT}
 

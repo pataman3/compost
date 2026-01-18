@@ -1,36 +1,36 @@
-services:
+services:                                                                           #--------------#
 
 ####################################################################################################
 ##### filebrowser
 ####################################################################################################
 
-  filebrowser:
-    image: filebrowser/filebrowser:latest
+  filebrowser:                                                                     ### <--
+    image: filebrowser/filebrowser:latest                                          ### <--
     container_name: ${SERVICE}                                                      # static
     pull_policy: always                                                             # static
     restart: unless-stopped                                                         # static
-    networks:                                                                       # static
-      - ${NETWORK}                                                                  # static
-#   ports:                                                                          ### DEBUG
-#     - ${FILEBROWSER__PORT_EXT}:${FILEBROWSER__PORT_INT}                           ### DEBUG
-    volumes:
-      - /config/filebrowser/filebrowser.db:/database.db
-      - /libraries:/srv
-    environment:
-      #-- docker -----------------------------------------------------------------------------------
+    networks:                                                                       #--------------#
+      - main                                                                       ### <--
+#   ports:                                                                         ### DEBUG
+#     - ${FILEBROWSER__PORT_EXT}:${FILEBROWSER__PORT_INT}                          ### DEBUG
+    volumes:                                                                        #--------------#
+      - /config/filebrowser/filebrowser.db:/database.db                            ### <--
+      - /libraries:/srv                                                            ### <--
+    environment:                                                                    #--------------#
+      #-- docker -------------------------------------------------------------------#--------------#
       - PUID=1000                                                                   # static
       - PGID=1000                                                                   # static
       - TZ=${TIMEZONE}                                                              # static
-      #-- filebrowser ------------------------------------------------------------------------------
-    labels:
-      #-- traefik ----------------------------------------------------------------------------------
+      #-- filebrowser --------------------------------------------------------------#--------------#
+    labels:                                                                         #--------------#
+      #-- traefik ------------------------------------------------------------------#--------------#
       - traefik.enable=true                                                         # static
       - traefik.http.routers.${SERVICE}.entrypoints=websecure                       # static
       - traefik.http.routers.${SERVICE}.middlewares=authelia                        # static
       - traefik.http.routers.${SERVICE}.rule=Host(`${SUBDOMAIN}.${DOMAIN}`)         # static
       - traefik.http.routers.${SERVICE}.tls.certresolver=cloudflare                 # static
       - traefik.http.services.${SERVICE}.loadbalancer.server.port=${SERVICE_PORT}   # static
-      #-- flame ------------------------------------------------------------------------------------
+      #-- flame --------------------------------------------------------------------#--------------#
       - flame.type=app                                                              # static
       - flame.name=${SERVICE}                                                       # static
       - flame.url=https://${SUBDOMAIN}.${DOMAIN}/                                   # static
@@ -38,7 +38,7 @@ services:
 
 ##### networking ###################################################################################
 
-networks:                                                                           # static
-  ${NETWORK}:                                                                       # static                    
-    name: ${NETWORK}                                                                # static
+networks:                                                                           #--------------#
+  main:                                                                            ### <--
+    name: main                                                                     ### <--
     external: true                                                                  # static

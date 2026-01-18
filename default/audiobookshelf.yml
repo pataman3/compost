@@ -1,49 +1,49 @@
-services:
+services:                                                                           #--------------#
 
 # to-do:
 # - audiobookshelf
 #   - setup oidc
 
-################################################################################
+####################################################################################################
 ##### audiobookshelf
-################################################################################
+####################################################################################################
 
-  audiobookshelf:
-    container_name: audiobookshelf
-    image: ghcr.io/advplyr/audiobookshelf:latest
-    pull_policy: always
-    restart: unless-stopped
-    networks:
-      - main
-#   ports:
-#     - ${AUDIOBOOKSHELF__PORT_EXT}:${AUDIOBOOKSHELF__PORT_INT}
-    volumes:
-      - /config/audiobookshelf/config:/config
-      - /config/audiobookshelf/metadata:/metadata
-      - /libraries/media:/media
-    environment:
-      # ct envvars
-      - PUID=1000
-      - PGID=1000
-      - TZ=${TIMEZONE}
-      # audiobookshelf envvars
-    labels:
-      # traefik labels
-      - traefik.enable=true
-      - traefik.http.routers.audiobookshelf.entrypoints=websecure
-#     - traefik.http.routers.audiobookshelf.middlewares=authelia
-      - traefik.http.routers.audiobookshelf.rule=Host(`shelf.${DOMAIN}`)
-      - traefik.http.routers.audiobookshelf.tls.certresolver=cloudflare
-      - traefik.http.services.audiobookshelf.loadbalancer.server.port=${AUDIOBOOKSHELF__PORT_INT}
-      # flame labels
-      - flame.type=app
-      - flame.name=audiobookshelf
-      - flame.url=https://shelf.${DOMAIN}/
-      - flame.icon=book-open-page-variant
+  audiobookshelf:                                                                  ### <--
+    image: ghcr.io/advplyr/audiobookshelf:latest                                   ### <--
+    container_name: ${SERVICE}                                                      # static
+    pull_policy: always                                                             # static
+    restart: unless-stopped                                                         # static
+    networks:                                                                       #--------------#
+      - main                                                                       ### <--
+#   ports:                                                                          # DEBUG
+#     - ${AUDIOBOOKSHELF__PORT_EXT}:${AUDIOBOOKSHELF__PORT_INT}                     # DEBUG
+    volumes:                                                                        #--------------#
+      - /config/audiobookshelf/config:/config                                      ### <--
+      - /config/audiobookshelf/metadata:/metadata                                  ### <--
+      - /libraries/media:/media                                                    ### <--
+    environment:                                                                    #--------------#
+      #-- docker -------------------------------------------------------------------#--------------#
+      - PUID=1000                                                                   # static
+      - PGID=1000                                                                   # static
+      - TZ=${TIMEZONE}                                                              # static
+      #-- audiobookshelf -----------------------------------------------------------#--------------#
+    labels:                                                                         #--------------#
+      #-- traefik ------------------------------------------------------------------#--------------#
+      - traefik.enable=true                                                         # static
+      - traefik.http.routers.${SERVICE}.entrypoints=websecure                       # static
+#     - traefik.http.routers.${SERVICE}.middlewares=authelia                        # static
+      - traefik.http.routers.${SERVICE}.rule=Host(`${SUBDOMAIN}.${DOMAIN}`)         # static
+      - traefik.http.routers.${SERVICE}.tls.certresolver=cloudflare                 # static
+      - traefik.http.services.${SERVICE}.loadbalancer.server.port=${SERVICE_PORT}   # static
+      #-- flame --------------------------------------------------------------------#--------------#
+      - flame.type=app                                                              # static
+      - flame.name=${SERVICE}                                                       # static
+      - flame.url=https://${SUBDOMAIN}.${DOMAIN}/                                   # static
+      - flame.icon=${ICON}                                                          # static
 
-##### networking
+##### networking ###################################################################################
 
-networks:
-  main:
-    name: main
-    external: true
+networks:                                                                           #--------------#
+  main:                                                                            ### <--
+    name: main                                                                     ### <--
+    external: true                                                                  # static

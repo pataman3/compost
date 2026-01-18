@@ -1,33 +1,39 @@
-version: '3.8'
 services:
+
+################################################################################
+##### flame
+################################################################################
+
   flame:
     container_name: flame
     image: pawelmalak/flame
     pull_policy: always
     restart: unless-stopped
+    networks:
+      - main
+#   ports:
+#     - ${FLAME__PORT_EXT}:${FLAME__PORT_INT}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /config/flame:/app/data
-    networks:
-      - main
-    ports:
-      - ${PORT_EXT}:${PORT_INT}
     environment:
+      # ct envvars
       - PUID=1000
       - PGID=1000
-      - TZ=US/Eastern
-      - PASSWORD=${PASSWORD}
+      - TZ=${TIMEZONE}
+      # flame envvars
+      - PASSWORD=${FLAME__PASSWORD}
     labels:
       # traefik labels
       - traefik.enable=true
-      - traefik.http.routers.flame.entrypoints=web
-      - traefik.http.routers.flame.rule=Host(`${HOST}`)
-      - traefik.http.middlewares.flame-redirect.redirectscheme.scheme=https
-      - traefik.http.routers.flame.middlewares=flame-redirect
-      - traefik.http.routers.flame-secure.entrypoints=websecure
-      - traefik.http.routers.flame-secure.rule=Host(`${HOST}`)
-      - traefik.http.routers.flame-secure.tls=true
-      - traefik.http.services.flame-service.loadbalancer.server.port=${PORT_INT}
+      - traefik.http.routers.flame.entrypoints=websecure
+#     - traefik.http.routers.filebrowser.middlewares=authelia   # let's not restrict for now
+      - traefik.http.routers.flame.rule=Host(`flame.${DOMAIN}`)
+      - traefik.http.routers.flame.tls.certresolver=cloudflare
+      - traefik.http.services.flame.loadbalancer.server.port=${FLAME__PORT_INT}
+
+##### networking
+
 networks:
   main:
     name: main

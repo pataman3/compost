@@ -1,57 +1,63 @@
-version: '3.8'
 services:
+
   traefik:
     container_name: traefik
     image: traefik:latest
     pull_policy: always
     restart: unless-stopped
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /config/traefik:/letsencrypt
     networks:
       - main
       - arr
     ports:
-      - ${PORT_1_EXT}:${PORT_1_INT}
-      - ${PORT_2_EXT}:${PORT_2_INT}
-      - ${PORT_3_EXT}:${PORT_3_INT}
+      - ${TRAEFIK__PORT_1_EXT}:${TRAEFIK__PORT_1_INT}
+      - ${TRAEFIK__PORT_2_EXT}:${TRAEFIK__PORT_2_INT}
+      - ${TRAEFIK__PORT_3_EXT}:${TRAEFIK__PORT_3_INT}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /config/traefik:/letsencrypt
     environment:
-      - CF_API_EMAIL=${CF_API_EMAIL}
-      - CF_API_KEY=${CF_API_KEY}
+      # ct envvars
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TIMEZONE}
+      # traefik envvars
+      - CF_API_EMAIL=${TRAEFIK__CF_API_EMAIL}
+      - CF_API_KEY=${TRAEFIK__CF_API_KEY}
     command:
       - --log.level=DEBUG
       - --api.insecure=true
       - --providers.docker=true
       - --providers.docker.exposedbydefault=false
       - --serverstransport.insecureskipverify=true
-      - --entrypoints.web.address=:${PORT_1_INT}
-      - --entrypoints.websecure.address=:${PORT_2_INT}
+      - --entrypoints.web.address=:${TRAEFIK__PORT_1_INT}
+      - --entrypoints.websecure.address=:${TRAEFIK__PORT_2_INT}
       - --certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare
       # - --certificatesresolvers.cloudflare.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
-      - --certificatesresolvers.cloudflare.acme.email=${CF_API_EMAIL}
+      - --certificatesresolvers.cloudflare.acme.email=${TRAEFIK__CF_API_EMAIL}
       - --certificatesresolvers.cloudflare.acme.storage=/letsencrypt/acme.json
     labels:
       # traefik labels
       - traefik.enable=true
       - traefik.http.routers.traefik.entrypoints=web
-      - traefik.http.routers.traefik.rule=Host(`${HOST}`)
+      - traefik.http.routers.traefik.rule=Host(`traefik.${DOMAIN}`)
       - traefik.http.middlewares.traefik-redirect.redirectscheme.scheme=https
       - traefik.http.routers.traefik.middlewares=traefik-redirect
       - traefik.http.routers.traefik-secure.entrypoints=websecure
-      - traefik.http.routers.traefik-secure.rule=Host(`${HOST}`)
+      - traefik.http.routers.traefik-secure.rule=Host(`traefik.${DOMAIN}`)
       - traefik.http.routers.traefik-secure.tls=true
       - traefik.http.routers.traefik-secure.tls.certresolver=cloudflare
-      - traefik.http.routers.traefik-secure.tls.domains[0].main=${DOMAIN_0_MAIN}
-      - traefik.http.routers.traefik-secure.tls.domains[0].sans=${DOMAIN_0_SANS}
-      - traefik.http.routers.traefik-secure.tls.domains[1].main=${DOMAIN_1_MAIN}
-      - traefik.http.routers.traefik-secure.tls.domains[1].sans=${DOMAIN_1_SANS}
+      - traefik.http.routers.traefik-secure.tls.domains[0].main=${DOMAIN}
+      - traefik.http.routers.traefik-secure.tls.domains[0].sans=*.${DOMAIN}
+      - traefik.http.routers.traefik-secure.tls.domains[1].main=${DOMAIN_ALT}
+      - traefik.http.routers.traefik-secure.tls.domains[1].sans=*.${DOMAIN_ALT}
       # - traefik.http.routers.traefik-secure.service=api@internal
-      - traefik.http.services.traefik-service.loadbalancer.server.port=${PORT_3_INT}
+      - traefik.http.services.traefik-service.loadbalancer.server.port=${TRAEFIK__PORT_3_INT}
       # flame labels
       - flame.type=app
       - flame.name=traefik
-      - flame.url=https://${HOST}/
+      - flame.url=https://traefik.${DOMAIN}/
       - flame.icon=traffic-light
+
 networks:
   main:
     name: main

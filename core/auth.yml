@@ -1,5 +1,9 @@
 services:
 
+################################################################################
+##### authelia
+################################################################################
+
   authelia:
     container_name: authelia
     image: authelia/authelia:latest
@@ -24,8 +28,9 @@ services:
     labels:
       # traefik labels
       - traefik.enable=true
-      - traefik.http.routers.authelia.rule=Host(`auth.${DOMAIN}`)
       - traefik.http.routers.authelia.entrypoints=websecure
+#     - traefik.http.routers.authelia.middlewares=authelia   # let's not restrict forever
+      - traefik.http.routers.authelia.rule=Host(`auth.${DOMAIN}`)
       - traefik.http.routers.authelia.tls.certresolver=cloudflare
       - traefik.http.services.authelia.loadbalancer.server.port=${AUTHELIA__PORT_INT}
       # flame labels
@@ -33,6 +38,8 @@ services:
       - flame.name=authelia
       - flame.url=https://auth.${DOMAIN}/
       - flame.icon=account-box
+
+##### networking
 
 networks:
   main:

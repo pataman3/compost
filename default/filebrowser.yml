@@ -1,36 +1,43 @@
 services:
+
+################################################################################
+##### filebrowser
+################################################################################
+
   filebrowser:
     container_name: filebrowser
     image: filebrowser/filebrowser:latest
     pull_policy: always
     restart: unless-stopped
+    networks:
+      - main
+#   ports:
+#     - ${FILEBROWSER__PORT_EXT}:${FILEBROWSER__PORT_INT}
     volumes:
       - /config/filebrowser/filebrowser.db:/database.db
       - /libraries:/srv
-    networks:
-      - main
-    ports:
-      - ${PORT_EXT}:${PORT_INT}
     environment:
+      # ct envvars
       - PUID=1000
       - PGID=1000
-      - TZ=US/Eastern
+      - TZ=${TIMEZONE}
+      # filebrowser envvars
     labels:
       # traefik labels
       - traefik.enable=true
-      - traefik.http.routers.filebrowser.entrypoints=web
+      - traefik.http.routers.filebrowser.entrypoints=websecure
+      - traefik.http.routers.filebrowser.middlewares=authelia
       - traefik.http.routers.filebrowser.rule=Host(`files.${DOMAIN}`)
-      - traefik.http.middlewares.filebrowser-redirect.redirectscheme.scheme=https
-      - traefik.http.routers.filebrowser.middlewares=filebrowser-redirect
-      - traefik.http.routers.filebrowser-secure.entrypoints=websecure
-      - traefik.http.routers.filebrowser-secure.rule=Host(`files.${DOMAIN}`)
-      - traefik.http.routers.filebrowser-secure.tls=true
-      - traefik.http.services.filebrowser-service.loadbalancer.server.port=${PORT_INT}
+      - traefik.http.routers.filebrowser.tls.certresolver=cloudflare
+      - traefik.http.services.filebrowser.loadbalancer.server.port=${FILEBROWSER__PORT_INT}
       # flame labels
       - flame.type=app
       - flame.name=file browser
       - flame.url=https://files.${DOMAIN}/
       - flame.icon=folder
+
+##### networking
+
 networks:
   main:
     name: main

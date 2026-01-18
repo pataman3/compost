@@ -37,7 +37,7 @@ services:
       # traefik labels
       - traefik.enable=true
       - traefik.http.routers.crafty.entrypoints=websecure
-      - traefik.http.routers.crafty.middlewares=authelia
+#     - traefik.http.routers.crafty.middlewares=authelia
       - traefik.http.routers.crafty.rule=Host(`crafty.${DOMAIN}`)
       - traefik.http.routers.crafty.tls.certresolver=cloudflare
       - traefik.http.services.crafty.loadbalancer.server.port=${CRAFTY__PORT_2_INT}

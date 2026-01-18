@@ -1,36 +1,46 @@
 services:
+
+################################################################################
+##### vikunja
+################################################################################
+
   vikunja:
     container_name: vikunja
     image: vikunja/vikunja:latest
     pull_policy: always
     restart: unless-stopped
+    networks:
+      - main
+#   ports:
+#     - ${VIKUNJA__PORT_EXT}:${VIKUNJA__PORT_INT}
     volumes:
       - /config/vikunja/db:/db
       - /config/vikunja/files:/app/vikunja/files
-    networks:
-      - main
-    ports:
-      - ${PORT_1_EXT}:${PORT_1_INT}
     environment:
-      VIKUNJA_DATABASE_PATH: /db/vikunja.db
-      #VIKUNJA_SERVICE_JWTSECRET: <a super secure random secret>
-      VIKUNJA_SERVICE_PUBLICURL: https://vikunja.${DOMAIN}/
+      # ct envvars
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TIMEZONE}
+      # vikunja envvars
+      - VIKUNJA_DATABASE_PATH=/db/vikunja.db
+      # - VIKUNJA_SERVICE_JWTSECRET: <a super secure random secret>
+      - VIKUNJA_SERVICE_PUBLICURL=https://vikunja.${DOMAIN}/
     labels:
       # traefik labels
       - traefik.enable=true
-      - traefik.http.routers.vikunja.entrypoints=web
+      - traefik.http.routers.vikunja.entrypoints=websecure
+      - traefik.http.routers.vikunja.middlewares=authelia
       - traefik.http.routers.vikunja.rule=Host(`vikunja.${DOMAIN}`)
-      - traefik.http.middlewares.vikunja-redirect.redirectscheme.scheme=https
-      - traefik.http.routers.vikunja.middlewares=vikunja-redirect
-      - traefik.http.routers.vikunja-secure.entrypoints=websecure
-      - traefik.http.routers.vikunja-secure.rule=Host(`vikunja.${DOMAIN}`)
-      - traefik.http.routers.vikunja-secure.tls=true
-      - traefik.http.services.vikunja-service.loadbalancer.server.port=${PORT_1_INT}
+      - traefik.http.routers.vikunja.tls.certresolver=cloudflare
+      - traefik.http.services.vikunja.loadbalancer.server.port=${VIKUNJA__PORT_INT}
       # flame labels
       - flame.type=app
       - flame.name=vikunja
       - flame.url=https://vikunja.${DOMAIN}/
       - flame.icon=format-list-checks
+
+##### networking
+
 networks:
   main:
     name: main

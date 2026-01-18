@@ -14,7 +14,8 @@ services:                                                                       
 #   ports:                                                                          # DEBUG
 #     - ${FILEBROWSER__PORT_EXT}:${FILEBROWSER__PORT_INT}                           # DEBUG
     volumes:                                                                        #--------------#
-      - /config/filebrowser/filebrowser.db:/database.db                            ### <--
+      - /config/filebrowser/config:/config                                         ### <--
+      - /config/filebrowser/database:/database                                     ### <--
       - /libraries:/srv                                                            ### <--
     environment:                                                                    #--------------#
       #-- docker -------------------------------------------------------------------#--------------#

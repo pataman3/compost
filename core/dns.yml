@@ -1,44 +1,47 @@
-version: '3.8'
 services:
+
   pihole:
     container_name: pihole
     image: pihole/pihole:latest
     pull_policy: always
     restart: unless-stopped
-    volumes:
-      - /config/pihole:/etc/pihole
-      - /config/pihole/dnsmasq.d:/etc/dnsmasq.d
     networks:
       - main
     ports:
-      - ${IP}:${PIHOLE_PORT_1_EXT}:${PIHOLE_PORT_1_INT}
-      - ${IP}:${PIHOLE_PORT_1_EXT}:${PIHOLE_PORT_1_INT}/udp
-      - ${PIHOLE_PORT_2_EXT}:${PIHOLE_PORT_2_INT}
+      - ${IP}:${PIHOLE__PORT_1_EXT}:${PIHOLE__PORT_1_INT}
+      - ${IP}:${PIHOLE__PORT_1_EXT}:${PIHOLE__PORT_1_INT}/udp
+      - ${PIHOLE__PORT_2_EXT}:${PIHOLE__PORT_2_INT}
+    volumes:
+      - /config/pihole:/etc/pihole
+      - /config/pihole/dnsmasq.d:/etc/dnsmasq.d
     environment:
+      # ct envvars
       - PUID=1000
       - PGID=1000
+      - TZ=${TIMEZONE}
+      # pihole envvars
       - DNSSEC=true
-      - PIHOLE_DNS_=${IP}#${UNBOUND_PORT_INT}
+      - PIHOLE_DNS_=${IP}#${UNBOUND__PORT_INT}
       - TEMPERATUREUNIT=f
-      - TZ=US/Eastern
-      - WEBPASSWORD=${WEBPASSWORD}
+      - WEBPASSWORD=${PIHOLE__WEBPASSWORD}
       - WEBTHEME=default-darker
     labels:
       # traefik labels
       - traefik.enable=true
       - traefik.http.routers.pihole.entrypoints=web
-      - traefik.http.routers.pihole.rule=Host(`${HOST}`)
+      - traefik.http.routers.pihole.rule=Host(`pihole.${DOMAIN}`)
       - traefik.http.middlewares.pihole-redirect.redirectscheme.scheme=https
       - traefik.http.routers.pihole.middlewares=pihole-redirect
       - traefik.http.routers.pihole-secure.entrypoints=websecure
-      - traefik.http.routers.pihole-secure.rule=Host(`${HOST}`)
+      - traefik.http.routers.pihole-secure.rule=Host(`pihole.${DOMAIN}`)
       - traefik.http.routers.pihole-secure.tls=true
-      - traefik.http.services.pihole-service.loadbalancer.server.port=${PIHOLE_PORT_2_INT}
+      - traefik.http.services.pihole-service.loadbalancer.server.port=${PIHOLE__PORT_2_INT}
       # flame labels
       - flame.type=app
       - flame.name=pihole
-      - flame.url=https://${HOST}/admin
+      - flame.url=https://pihole.${DOMAIN}/admin
       - flame.icon=dns
+
   unbound:
     container_name: unbound
     image: mvance/unbound:latest
@@ -47,8 +50,14 @@ services:
     networks:
       - main
     ports:
-      - ${UNBOUND_PORT_EXT}:${UNBOUND_PORT_INT}
-      - ${UNBOUND_PORT_EXT}:${UNBOUND_PORT_INT}/udp
+      - ${UNBOUND__PORT_EXT}:${UNBOUND__PORT_INT}
+      - ${UNBOUND__PORT_EXT}:${UNBOUND__PORT_INT}/udp
+    environment:
+      # ct envvars
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TIMEZONE}
+
 networks:
   main:
     name: main

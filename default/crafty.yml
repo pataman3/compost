@@ -1,6 +1,8 @@
 services:
 
-# to-do: fix crafty ports
+# to-do:
+# - crafty
+#   - fix ports
 
 ################################################################################
 ##### crafty

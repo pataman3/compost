@@ -1,6 +1,8 @@
 services:
 
-# to-do: setup audiobookshelf oidc
+# to-do:
+# - audiobookshelf
+#   - setup oidc
 
 ################################################################################
 ##### audiobookshelf

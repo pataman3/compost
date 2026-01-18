@@ -1,43 +1,43 @@
-services:
+services:                                                                           #--------------#
 
-################################################################################
+####################################################################################################
 ##### silverbullet
-################################################################################
+####################################################################################################
 
-  silverbullet:
-    container_name: silverbullet
-    image: zefhemel/silverbullet:latest
-    pull_policy: always
-    restart: unless-stopped
-    networks:
-      - main
-#   ports:
-#     - ${SILVERBULLET__PORT_EXT}:${SILVERBULLET__PORT_INT}
-    volumes:
-      - /libraries/notes:/space
-    environment:
-      # ct envvars
-      - PUID=1000
-      - PGID=1000
-      - TZ=${TIMEZONE}
-      # silverbullet envvars
-    labels:
-      # traefik labels
-      - traefik.enable=true
-      - traefik.http.routers.silverbullet.entrypoints=websecure
-      - traefik.http.routers.silverbullet.middlewares=authelia
-      - traefik.http.routers.silverbullet.rule=Host(`bullet.${DOMAIN}`)
-      - traefik.http.routers.silverbullet.tls.certresolver=cloudflare
-      - traefik.http.services.silverbullet.loadbalancer.server.port=${SILVERBULLET__PORT_INT}
-      # flame labels
-      - flame.type=app
-      - flame.name=silverbullet
-      - flame.url=https://bullet.${DOMAIN}/
-      - flame.icon=note
+  silverbullet:                                                                    ### <--
+    image: zefhemel/silverbullet:latest                                            ### <--
+    container_name: ${SERVICE}                                                      # static
+    pull_policy: always                                                             # static
+    restart: unless-stopped                                                         # static
+    networks:                                                                       #--------------#
+      - main                                                                       ### <--
+#   ports:                                                                          #--------------#
+#     - ${SILVERBULLET__PORT_EXT}:${SILVERBULLET__PORT_INT}                         # DEBUG
+    volumes:                                                                        #--------------#
+      - /libraries/notes:/space                                                    ### <--
+    environment:                                                                    #--------------#
+      #-- docker -------------------------------------------------------------------#--------------#
+      - PUID=1000                                                                   # static
+      - PGID=1000                                                                   # static
+      - TZ=${TIMEZONE}                                                              # static
+      #-- silverbullet -------------------------------------------------------------#--------------#
+    labels:                                                                         #--------------#
+      #-- traefik ------------------------------------------------------------------#--------------#
+      - traefik.enable=true                                                         # static
+      - traefik.http.routers.${SERVICE}.entrypoints=websecure                       # static
+      - traefik.http.routers.${SERVICE}.middlewares=authelia                        # static
+      - traefik.http.routers.${SERVICE}.rule=Host(`${SUBDOMAIN}.${DOMAIN}`)         # static
+      - traefik.http.routers.${SERVICE}.tls.certresolver=cloudflare                 # static
+      - traefik.http.services.${SERVICE}.loadbalancer.server.port=${SERVICE_PORT}   # static
+      #-- flame --------------------------------------------------------------------#--------------#
+      - flame.type=app                                                              # static
+      - flame.name=${SERVICE}                                                       # static
+      - flame.url=https://${SUBDOMAIN}.${DOMAIN}/                                   # static
+      - flame.icon=${ICON}                                                          # static
 
-##### networking
+##### networking ###################################################################################
 
-networks:
-  main:
-    name: main
-    external: true
+networks:                                                                           #--------------#
+  main:                                                                            ### <--
+    name: main                                                                     ### <--
+    external: true                                                                  # static

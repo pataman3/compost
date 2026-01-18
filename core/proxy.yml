@@ -1,5 +1,14 @@
 services:
 
+# to-do:
+# - traefik
+#   - fix commands
+#   - fix labels
+
+################################################################################
+##### traefik
+################################################################################
+
   traefik:
     container_name: traefik
     image: traefik:latest
@@ -57,6 +66,8 @@ services:
       - flame.name=traefik
       - flame.url=https://traefik.${DOMAIN}/
       - flame.icon=traffic-light
+
+##### networking
 
 networks:
   main:

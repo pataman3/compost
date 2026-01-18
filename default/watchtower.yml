@@ -6,7 +6,7 @@ services:
 
   watchtower:
     container_name: watchtower
-    image: containrrr/watchtower:latest
+    image: nickfedor/watchtower:latest
     pull_policy: always
     restart: unless-stopped
     networks:

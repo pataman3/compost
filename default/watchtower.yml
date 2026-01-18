@@ -1,18 +1,30 @@
 services:
+
+################################################################################
+##### watchtower
+################################################################################
+
   watchtower:
     container_name: watchtower
     image: containrrr/watchtower:latest
     pull_policy: always
     restart: unless-stopped
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - main
       - arr
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     environment:
+      # ct envvars
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TIMEZONE}
+      # watchtower envvars
       - WATCHTOWER_CLEANUP=true
       - WATCHTOWER_INCLUDE_STOPPED=true
-      - WATCHTOWER_ROLLING_RESTART=true
+
+##### networking
+
 networks:
   main:
     name: main

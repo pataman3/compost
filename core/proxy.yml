@@ -61,6 +61,9 @@ services:
       - traefik.http.routers.traefik-secure.tls.domains[1].sans=*.${DOMAIN_ALT}
       # - traefik.http.routers.traefik-secure.service=api@internal
       - traefik.http.services.traefik-service.loadbalancer.server.port=${TRAEFIK__PORT_3_INT}
+      - traefik.http.middlewares.authelia.forwardauth.address=http://authelia:${AUTHELIA__PORT_INT}/api/verify?rd=https://auth.${DOMAIN}
+      - traefik.http.middlewares.authelia.forwardauth.trustForwardHeader=true
+      - traefik.http.middlewares.authelia.forwardauth.authResponseHeaders=Remote-User,Remote-Groups,Remote-Name,Remote-Email
       # flame labels
       - flame.type=app
       - flame.name=traefik

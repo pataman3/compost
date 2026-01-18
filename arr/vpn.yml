@@ -1,37 +1,41 @@
-# vpn.yml
-
 services:
+
+################################################################################
+##### gluetun
+################################################################################
+
   gluetun:
     container_name: gluetun
     image: qmcgaw/gluetun:latest
+    pull_policy: always
     restart: unless-stopped
     networks:
       - arr
     ports:
       ### apps
       # bazarr ports
-      - ${BAZARR_PORT_EXT}:${BAZARR_PORT_INT}
+      - ${BAZARR__PORT_EXT}:${BAZARR__PORT_INT}
       # lidarr ports
-      - ${LIDARR_PORT_EXT}:${LIDARR_PORT_INT}
+      - ${LIDARR__PORT_EXT}:${LIDARR__PORT_INT}
       # prowlarr ports
-      - ${PROWLARR_PORT_EXT}:${PROWLARR_PORT_INT}
+      - ${PROWLARR__PORT_EXT}:${PROWLARR__PORT_INT}
       # radarr ports
-      - ${RADARR_1080_PORT_EXT}:${RADARR_1080_PORT_INT}
-      - ${RADARR_2160_PORT_EXT}:${RADARR_2160_PORT_INT}
-      - ${RADARR_ANIME_PORT_EXT}:${RADARR_ANIME_PORT_INT}
+      - ${RADARR_1080__PORT_EXT}:${RADARR_1080__PORT_INT}
+      - ${RADARR_2160__PORT_EXT}:${RADARR_2160__PORT_INT}
+      - ${RADARR_ANIME__PORT_EXT}:${RADARR_ANIME__PORT_INT}
       # readarr ports
-      - ${READARR_PORT_EXT}:${READARR_PORT_INT} 
+      - ${READARR__PORT_EXT}:${READARR__PORT_INT} 
       # sonarr ports
-      - ${SONARR_1080_PORT_EXT}:${SONARR_1080_PORT_INT}
-      - ${SONARR_2160_PORT_EXT}:${SONARR_2160_PORT_INT}
-      - ${SONARR_ANIME_PORT_EXT}:${SONARR_ANIME_PORT_INT}
+      - ${SONARR_1080__PORT_EXT}:${SONARR_1080__PORT_INT}
+      - ${SONARR_2160__PORT_EXT}:${SONARR_2160__PORT_INT}
+      - ${SONARR_ANIME__PORT_EXT}:${SONARR_ANIME__PORT_INT}
       ### clients
       # qbittorrent ports
-      - ${QBITTORRENT_PORT_EXT}:${QBITTORRENT_PORT_INT}
-      - ${QBITTORRENT_PORT_2_EXT}:${QBITTORRENT_PORT_2_INT}
-      - ${QBITTORRENT_PORT_2_EXT}:${QBITTORRENT_PORT_2_INT}/udp
+      - ${QBITTORRENT__PORT_1_EXT}:${QBITTORRENT__PORT_1_INT}
+      - ${QBITTORRENT__PORT_2_EXT}:${QBITTORRENT__PORT_2_INT}
+      - ${QBITTORRENT__PORT_2_EXT}:${QBITTORRENT__PORT_2_INT}/udp
       # sabnzbd ports
-      - ${SABNZBD_PORT_EXT}:${SABNZBD_PORT_INT}
+      - ${SABNZBD__PORT_EXT}:${SABNZBD__PORT_INT}
     cap_add:
       - NET_ADMIN
     devices:
@@ -39,12 +43,20 @@ services:
     volumes:
       - /config/gluetun:/gluetun
     environment:
-      - SERVER_CITIES=${SERVER_CITIES}
-      - VPN_SERVICE_PROVIDER=${VPN_SERVICE_PROVIDER}
-      - VPN_TYPE=${VPN_TYPE}
-      - WIREGUARD_ADDRESSES=${WIREGUARD_ADDRESSES}
-      - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
+      # ct envvars
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TIMEZONE}
+      # gluetun envvars
+      - SERVER_CITIES=${GLUETUN__SERVER_CITIES}
+      - VPN_SERVICE_PROVIDER=${GLUETUN__VPN_SERVICE_PROVIDER}
+      - VPN_TYPE=${GLUETUN__VPN_TYPE}
+      - WIREGUARD_ADDRESSES=${GLUETUN__WIREGUARD_ADDRESSES}
+      - WIREGUARD_PRIVATE_KEY=${GLUETUN__WIREGUARD_PRIVATE_KEY}
       - UPDATER_PERIOD=6h
+
+##### networking
+
 networks:
   arr:
     name: arr

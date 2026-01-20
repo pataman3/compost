@@ -4,8 +4,8 @@ services:                                                                       
 ##### homarr
 ####################################################################################################
 
-  homarr:
-    image: ghcr.io/homarr-labs/homarr:latest
+  homarr:                                                                          ### <--
+    image: ghcr.io/homarr-labs/homarr:latest                                       ### <--
     container_name: ${SERVICE}                                                      # static
     pull_policy: always                                                             # static
     restart: unless-stopped                                                         # static

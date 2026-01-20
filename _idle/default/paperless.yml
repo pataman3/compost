@@ -1,28 +1,22 @@
-version: '3.8'
 services:
   redis-paperless:
     container_name: redis-paperless
-    image: redis:7
+    image: docker.io/library/redis:7
     pull_policy: always
     restart: unless-stopped
     volumes:
       - /config/redis-paperless:/data
     networks:
-      - default
-    ports:
-      - ${REDIS_PORT_EXT}:${REDIS_PORT_INT}
-    command: --save 60 1 --loglevel warning
+      - main
   postgres-paperless:
     container_name: postgres-paperless
-    image: postgres:13
+    image: docker.io/library/postgres:17
     pull_policy: always
     restart: unless-stopped
     volumes:
       - /config/postgres-paperless:/var/lib/postgresql/data
     networks:
-      - compost-bin
-    ports:
-      - ${POSTGRES_PORT_EXT}:${POSTGRES_PORT_INT}
+      - main
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
@@ -41,37 +35,37 @@ services:
       - ./export:/usr/src/paperless/export
       - ./consume:/usr/src/paperless/consume
     networks:
-      - default
+      - main
     ports:
       - ${PAPERLESS_PORT_EXT}:${PAPERLESS_PORT_INT}
     environment:
       - USERMAP_UID=1000
       - USERMAP_GID=1000
       - PAPERLESS_TIME_ZONE=US/Eastern
-      - PAPERLESS_REDIS=redis://redis-paperless:${REDIS_PORT_INT}
+      - PAPERLESS_REDIS=redis://redis-paperless:6379
       - PAPERLESS_DBHOST=postgres-paperless
       - PAPERLESS_OCR_LANGUAGE=eng
       - PAPERLESS_AUTO_LOGIN_USERNAME=${PAPERLESS_AUTO_LOGIN_USERNAME}
       - PAPERLESS_ADMIN_USER=${PAPERLESS_ADMIN_USER}
       - PAPERLESS_ADMIN_PASSWORD=${PAPERLESS_ADMIN_PASSWORD}
-      - PAPERLESS_URL=https://${HOST}
+      - PAPERLESS_URL=https://paperless.${DOMAIN}
     labels:
       # traefik labels
       - traefik.enable=true
       - traefik.http.routers.paperless.entrypoints=web
-      - traefik.http.routers.paperless.rule=Host(`${HOST}`)
+      - traefik.http.routers.paperless.rule=Host(`paperless.${DOMAIN}`)
       - traefik.http.middlewares.paperless-redirect.redirectscheme.scheme=https
       - traefik.http.routers.paperless.middlewares=paperless-redirect
       - traefik.http.routers.paperless-secure.entrypoints=websecure
-      - traefik.http.routers.paperless-secure.rule=Host(`${HOST}`)
+      - traefik.http.routers.paperless-secure.rule=Host(`paperless.${DOMAIN}`)
       - traefik.http.routers.paperless-secure.tls=true
       - traefik.http.services.paperless-service.loadbalancer.server.port=${PAPERLESS_PORT_INT}
       # flame labels
       - flame.type=app
       - flame.name=paperless
-      - flame.url=https://${HOST}/
+      - flame.url=https://paperless.${DOMAIN}/
       - flame.icon=leaf
 networks:
   default:
-    name: default
+    name: main
     external: true

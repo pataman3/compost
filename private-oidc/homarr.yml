@@ -19,8 +19,8 @@ services:
       - traefik.http.services.${SERVICE}.loadbalancer.server.port=${SERVICE_PORT}
     environment:
       #-- docker -------------------------------------------------------------------#--------------#
-      - PUID=1000
-      - PGID=1000
+      - PUID=0                                                                      # docker mgmt
+      - PGID=0                                                                      # docker mgmt
       - TZ=${TIMEZONE}
       #-- homarr -------------------------------------------------------------------#--------------#
       - SECRET_ENCRYPTION_KEY=${HOMARR__SECRET_ENCRYPTION_KEY}                     ### <--

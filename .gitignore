@@ -11,5 +11,5 @@ private-vpn/*/
 public/*/
 
 # envvar files
+*.env
 .env.*
-.env

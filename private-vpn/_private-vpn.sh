@@ -1,17 +1,11 @@
 #!/bin/bash
 
+source _private-vpn.env
+
 services=(
-  audiobookshelf
-  filebrowser
-  homarr
-  jellyfin
-  jellyseerr
-  profilarr
-  silverbullet
-  suwayomi
-  uptime-kuma
-  vikunja
-  watchtower
+  prowlarr
+  qbittorrent
+  sabnzbd
 )
 
 for service in "${services[@]}"; do

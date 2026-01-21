@@ -1,0 +1,43 @@
+services:
+
+#####-------------------------------------------------------------------------------#--------------#
+#####-- bazarr ---------------------------------------------------------------------#--------------#
+#####-------------------------------------------------------------------------------#--------------#
+
+  bazarr:                                                                          ### <--
+    image: lscr.io/linuxserver/bazarr:latest                                       ### <--
+    container_name: ${SERVICE}
+    pull_policy: always
+    restart: unless-stopped
+    labels:
+      #-- traefik ------------------------------------------------------------------#--------------#
+      - traefik.enable=true
+      - traefik.http.routers.${SERVICE}.entrypoints=websecure
+      - traefik.http.routers.${SERVICE}.middlewares=authelia
+      - traefik.http.routers.${SERVICE}.rule=Host(`${SUBDOMAIN}.${DOMAIN}`)
+      - traefik.http.routers.${SERVICE}.tls.certresolver=cloudflare
+      - traefik.http.services.${SERVICE}.loadbalancer.server.port=${SERVICE_PORT}
+    environment:
+      #-- docker -------------------------------------------------------------------#--------------#
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TIMEZONE}
+      #-- bazarr -------------------------------------------------------------------#--------------#
+      # - ...                                                                      ### <--
+    volumes:
+      - /config/bazarr:/config                                                     ### <--
+      - /libraries:/libraries                                                      ### <--
+
+###-- networking -------------------------------------------------------------------#--------------#
+
+    networks:
+#     - main
+      - arr
+
+networks:
+# main:
+#   name: main
+#   external: true
+  arr:
+    name: arr
+    external: true

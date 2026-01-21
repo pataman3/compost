@@ -3,9 +3,12 @@
 
 # stack folders
 _idle/*/*/
-arr/*/
-core/*/
-default/*/
+backend/*/
+backend-vpn/*/
+private/*/
+private-oidc/*/
+private-vpn/*/
+public/*/
 
 # envvar files
 .env.*

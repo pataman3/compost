@@ -1,0 +1,123 @@
+services:
+
+#####-------------------------------------------------------------------------------#--------------#
+#####-- radarr-1080 ----------------------------------------------------------------#--------------#
+#####-------------------------------------------------------------------------------#--------------#
+
+  radarr-1080:                                                                     ### <--
+    image: lscr.io/linuxserver/radarr:latest                                       ### <--
+    container_name: ${SERVICE_1}
+    pull_policy: always
+    restart: unless-stopped
+    labels:
+      #-- traefik ------------------------------------------------------------------#--------------#
+      - traefik.enable=true
+      - traefik.http.routers.${SERVICE_1}.entrypoints=websecure
+      - traefik.http.routers.${SERVICE_1}.middlewares=authelia
+      - traefik.http.routers.${SERVICE_1}.rule=Host(`${SUBDOMAIN_1}.${DOMAIN}`)
+      - traefik.http.routers.${SERVICE_1}.tls.certresolver=cloudflare
+      - traefik.http.services.${SERVICE_1}.loadbalancer.server.port=${SERVICE_PORT_1}
+    environment:
+      #-- docker -------------------------------------------------------------------#--------------#
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TIMEZONE}
+      #-- radarr-1080 --------------------------------------------------------------#--------------#
+      # - ...                                                                      ### <--
+    volumes:
+      - /config/radarr-1080:/config
+      - /libraries/media/movies/1080:/movies/1080
+      - /libraries/downloads/torrents/complete/radarr-1080:/torrents/complete/radarr-1080
+      - /libraries/downloads/usenet/complete/radarr-1080:/usenet/complete/radarr-1080
+
+###-- networking -------------------------------------------------------------------#--------------#
+
+    networks:
+#     - main
+      - arr
+
+
+
+#####-------------------------------------------------------------------------------#--------------#
+#####-- radarr-2160 ----------------------------------------------------------------#--------------#
+#####-------------------------------------------------------------------------------#--------------#
+
+  radarr-2160:                                                                     ### <--
+    image: lscr.io/linuxserver/radarr:latest                                       ### <--
+    container_name: ${SERVICE_2}
+    pull_policy: always
+    restart: unless-stopped
+    labels:
+      #-- traefik ------------------------------------------------------------------#--------------#
+      - traefik.enable=true
+      - traefik.http.routers.${SERVICE_2}.entrypoints=websecure
+      - traefik.http.routers.${SERVICE_2}.middlewares=authelia
+      - traefik.http.routers.${SERVICE_2}.rule=Host(`${SUBDOMAIN_2}.${DOMAIN}`)
+      - traefik.http.routers.${SERVICE_2}.tls.certresolver=cloudflare
+      - traefik.http.services.${SERVICE_2}.loadbalancer.server.port=${SERVICE_PORT_2}
+    environment:
+      #-- docker -------------------------------------------------------------------#--------------#
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TIMEZONE}
+      #-- radarr-2160 --------------------------------------------------------------#--------------#
+      # - ...                                                                      ### <--
+    volumes:
+      - /config/radarr-2160:/config
+      - /libraries/media/movies/2160:/movies/2160
+      - /libraries/downloads/torrents/complete/radarr-2160:/torrents/complete/radarr-2160
+      - /libraries/downloads/usenet/complete/radarr-2160:/usenet/complete/radarr-2160
+
+###-- networking -------------------------------------------------------------------#--------------#
+
+    networks:
+#     - main
+      - arr
+
+
+
+#####-------------------------------------------------------------------------------#--------------#
+#####-- radarr-anime ---------------------------------------------------------------#--------------#
+#####-------------------------------------------------------------------------------#--------------#
+
+  radarr-anime:                                                                    ### <--
+    image: lscr.io/linuxserver/radarr:latest                                       ### <--
+    container_name: ${SERVICE_3}
+    pull_policy: always
+    restart: unless-stopped
+    labels:
+      #-- traefik ------------------------------------------------------------------#--------------#
+      - traefik.enable=true
+      - traefik.http.routers.${SERVICE_3}.entrypoints=websecure
+      - traefik.http.routers.${SERVICE_3}.middlewares=authelia
+      - traefik.http.routers.${SERVICE_3}.rule=Host(`${SUBDOMAIN_3}.${DOMAIN}`)
+      - traefik.http.routers.${SERVICE_3}.tls.certresolver=cloudflare
+      - traefik.http.services.${SERVICE_3}.loadbalancer.server.port=${SERVICE_PORT_3}
+    environment:
+      #-- docker -------------------------------------------------------------------#--------------#
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TIMEZONE}
+      #-- radarr-anime -------------------------------------------------------------#--------------#
+      # - ...                                                                      ### <--
+    volumes:
+      - /config/radarr-anime:/config
+      - /libraries/media/movies/anime:/movies/anime
+      - /libraries/downloads/torrents/complete/radarr-anime:/torrents/complete/radarr-anime
+      - /libraries/downloads/usenet/complete/radarr-anime:/usenet/complete/radarr-anime
+
+###-- networking -------------------------------------------------------------------#--------------#
+
+    networks:
+#     - main
+      - arr
+
+
+
+networks:
+# main:
+#   name: main
+#   external: true
+  arr:
+    name: arr
+    external: true

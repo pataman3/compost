@@ -1,0 +1,67 @@
+services:
+
+#####-------------------------------------------------------------------------------#--------------#
+#####-- traefik --------------------------------------------------------------------#--------------#
+#####-------------------------------------------------------------------------------#--------------#
+
+  traefik:                                                                         ### <--
+    image: traefik:latest                                                          ### <--
+    container_name: ${SERVICE}
+    pull_policy: always
+    restart: unless-stopped
+    labels:
+      #-- traefik ------------------------------------------------------------------#--------------#
+      - traefik.enable=true
+      - traefik.http.routers.${SERVICE}.entrypoints=websecure
+#     - traefik.http.routers.${SERVICE}.middlewares=authelia                        # public
+      - traefik.http.routers.${SERVICE}.rule=Host(`${SUBDOMAIN}.${DOMAIN}`)
+      - traefik.http.routers.${SERVICE}.tls.certresolver=cloudflare
+      - traefik.http.services.${SERVICE}.loadbalancer.server.port=${SERVICE_PORT}
+      - traefik.http.routers.${SERVICE}.tls.domains[0].main=${DOMAIN}
+      - traefik.http.routers.${SERVICE}.tls.domains[0].sans=*.${DOMAIN}
+      - traefik.http.routers.${SERVICE}.tls.domains[1].main=${DOMAIN_ALT}
+      - traefik.http.routers.${SERVICE}.tls.domains[1].sans=*.${DOMAIN_ALT}
+      - traefik.http.middlewares.authelia.forwardauth.address=http://authelia:${AUTHELIA__PORT_INT}/api/verify?rd=https://auth.${DOMAIN}
+      - traefik.http.middlewares.authelia.forwardauth.trustForwardHeader=true
+      - traefik.http.middlewares.authelia.forwardauth.authResponseHeaders=Remote-User,Remote-Groups,Remote-Name,Remote-Email
+    environment:
+      #-- docker -------------------------------------------------------------------#--------------#
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TIMEZONE}
+      #-- traefik ------------------------------------------------------------------#--------------#
+      - CF_API_EMAIL=${TRAEFIK__CF_API_EMAIL}                                      ### <--
+      - CF_API_KEY=${TRAEFIK__CF_API_KEY}                                          ### <--
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock                                  ### <--
+      - /config/traefik:/letsencrypt                                               ### <--
+    command:
+      - --log.level=DEBUG
+      - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --serverstransport.insecureskipverify=true
+      - --entrypoints.web.address=:${TRAEFIK__PORT_1_INT}
+      - --entrypoints.websecure.address=:${TRAEFIK__PORT_2_INT}
+      - --certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare
+      # - --certificatesresolvers.cloudflare.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
+      - --certificatesresolvers.cloudflare.acme.email=${TRAEFIK__CF_API_EMAIL}
+      - --certificatesresolvers.cloudflare.acme.storage=/letsencrypt/acme.json
+
+###-- networking -------------------------------------------------------------------#--------------#
+
+    ports:
+      - ${TRAEFIK__PORT_1_EXT}:${TRAEFIK__PORT_1_INT}
+      - ${TRAEFIK__PORT_2_EXT}:${TRAEFIK__PORT_2_INT}
+      - ${TRAEFIK__PORT_3_EXT}:${TRAEFIK__PORT_3_INT}
+    networks:
+      - main
+      - arr
+
+networks:
+  main:
+    name: main
+    external: true
+  arr:
+    name: arr
+    external: true

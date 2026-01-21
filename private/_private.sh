@@ -3,10 +3,16 @@
 source _private.env
 
 services=(
-  audiobookshelf
-  homarr
-  jellyfin
-  vikunja
+  bazarr
+  filebrowser
+  jellyseerr
+  lidarr
+  profilarr
+  radarr
+  silverbullet
+  sonarr
+  suwayomi
+  uptime-kuma
 )
 
 for service in "${services[@]}"; do

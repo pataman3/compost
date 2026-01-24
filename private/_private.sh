@@ -7,6 +7,7 @@ services=(
   filebrowser
   jellyseerr
   lidarr
+  paperless
   profilarr
   radarr
   silverbullet

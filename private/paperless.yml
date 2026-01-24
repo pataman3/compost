@@ -1,0 +1,107 @@
+services:
+
+#####-------------------------------------------------------------------------------#--------------#
+#####-- paperless-redis ------------------------------------------------------------#--------------#
+#####-------------------------------------------------------------------------------#--------------#
+
+  paperless-redis:                                                                 ### <--
+    image: docker.io/library/redis:7                                               ### <--
+    container_name: ${SERVICE}
+    pull_policy: always
+    restart: unless-stopped
+    volumes:
+      - /config/redis-paperless:/data                                              ### <--
+
+
+###-- networking -------------------------------------------------------------------#--------------#
+
+    networks:
+      - main
+#     - arr
+
+
+
+#####-------------------------------------------------------------------------------#--------------#
+#####-- paperless-postgres ---------------------------------------------------------#--------------#
+#####-------------------------------------------------------------------------------#--------------#
+
+  paperless-postgres:                                                              ### <--
+    image: docker.io/library/postgres:17                                           ### <--
+    container_name: ${SERVICE}
+    pull_policy: always
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=${PAPERLESS_POSTGRES__DB}                                      ### <--
+      - POSTGRES_USER=${PAPERLESS_POSTGRES__USER}                                  ### <--
+      - POSTGRES_PASSWORD=${PAPERLESS_POSTGRES__PASSWORD}                          ### <--
+    volumes:
+      - /config/postgres-paperless:/var/lib/postgresql/data                        ### <--
+
+###-- networking -------------------------------------------------------------------#--------------#
+
+    networks:
+      - main
+#     - arr
+
+
+
+#####-------------------------------------------------------------------------------#--------------#
+#####-- paperless ------------------------------------------------------------------#--------------#
+#####-------------------------------------------------------------------------------#--------------#
+
+  paperless:
+    depends_on:                                                                    ### <--
+      - paperless-postgres                                                         ### <--
+      - paperless-redis                                                            ### <--
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest                              ### <--
+    container_name: ${SERVICE}
+    pull_policy: always
+    restart: unless-stopped
+    labels:
+      #-- traefik ------------------------------------------------------------------#--------------#
+      - traefik.enable=true
+      - traefik.http.routers.${SERVICE}.entrypoints=websecure
+      - traefik.http.routers.${SERVICE}.middlewares=authelia
+      - traefik.http.routers.${SERVICE}.rule=Host(`${SUBDOMAIN}.${DOMAIN}`)
+      - traefik.http.routers.${SERVICE}.tls.certresolver=cloudflare
+      - traefik.http.services.${SERVICE}.loadbalancer.server.port=${SERVICE_PORT}
+    environment:
+      #-- docker -------------------------------------------------------------------#--------------#
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TIMEZONE}
+      #-- paperless ----------------------------------------------------------------#--------------#
+#     - USERMAP_UID=1000                                                           ### <--
+#     - USERMAP_GID=1000                                                           ### <--
+#     - PAPERLESS_TIME_ZONE=${TIMEZONE}                                            ### <--
+      - PAPERLESS_REDIS=redis://paperless-redis:6379                               ### <--
+      - PAPERLESS_DBHOST=paperless-postgres                                        ### <--
+      - PAPERLESS_OCR_LANGUAGE=eng                                                 ### <--
+#     - PAPERLESS_AUTO_LOGIN_USERNAME=${PAPERLESS__AUTO_LOGIN_USERNAME}            ### <--
+#     - PAPERLESS_ADMIN_USER=${PAPERLESS__ADMIN_USER}                              ### <--
+#     - PAPERLESS_ADMIN_PASSWORD=${PAPERLESS__ADMIN_PASSWORD}                      ### <--
+      - PAPERLESS_DISABLE_AUTH=true                                                ### <--
+      - PAPERLESS_URL=https://${SUBDOMAIN}.${DOMAIN}                               ### <--
+    volumes:
+      - /config/paperless:/usr/src/paperless/data                                  ### <--
+      - /libraries/documents:/usr/src/paperless/media                              ### <--
+      - ./export:/usr/src/paperless/export                                         ### <--
+      - ./consume:/usr/src/paperless/consume                                       ### <--
+
+###-- networking -------------------------------------------------------------------#--------------#
+
+#   ports:
+#     - ${PAPERLESS__PORT_EXT}:${PAPERLESS__PORT_INT}                               # debug
+    networks:
+      - main
+#     - arr
+
+
+
+networks:
+  main:
+    name: main
+    external: true
+# arr:
+#   name: arr
+#   external: true

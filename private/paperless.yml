@@ -6,7 +6,7 @@ services:
 
   paperless-redis:                                                                 ### <--
     image: docker.io/library/redis:7                                               ### <--
-    container_name: ${SERVICE}
+    container_name: ${SERVICE_1}
     pull_policy: always
     restart: unless-stopped
     volumes:
@@ -27,7 +27,7 @@ services:
 
   paperless-postgres:                                                              ### <--
     image: docker.io/library/postgres:17                                           ### <--
-    container_name: ${SERVICE}
+    container_name: ${SERVICE_2}
     pull_policy: always
     restart: unless-stopped
     environment:
@@ -54,17 +54,17 @@ services:
       - paperless-postgres                                                         ### <--
       - paperless-redis                                                            ### <--
     image: ghcr.io/paperless-ngx/paperless-ngx:latest                              ### <--
-    container_name: ${SERVICE}
+    container_name: ${SERVICE_3}
     pull_policy: always
     restart: unless-stopped
     labels:
       #-- traefik ------------------------------------------------------------------#--------------#
       - traefik.enable=true
-      - traefik.http.routers.${SERVICE}.entrypoints=websecure
-      - traefik.http.routers.${SERVICE}.middlewares=authelia
-      - traefik.http.routers.${SERVICE}.rule=Host(`${SUBDOMAIN}.${DOMAIN}`)
-      - traefik.http.routers.${SERVICE}.tls.certresolver=cloudflare
-      - traefik.http.services.${SERVICE}.loadbalancer.server.port=${SERVICE_PORT}
+      - traefik.http.routers.${SERVICE_3}.entrypoints=websecure
+      - traefik.http.routers.${SERVICE_3}.middlewares=authelia
+      - traefik.http.routers.${SERVICE_3}.rule=Host(`${SUBDOMAIN_3}.${DOMAIN}`)
+      - traefik.http.routers.${SERVICE_3}.tls.certresolver=cloudflare
+      - traefik.http.services.${SERVICE_3}.loadbalancer.server.port=${SERVICE_PORT_3}
     environment:
       #-- docker -------------------------------------------------------------------#--------------#
       - PUID=1000
@@ -81,7 +81,7 @@ services:
 #     - PAPERLESS_ADMIN_USER=${PAPERLESS__ADMIN_USER}                              ### <--
 #     - PAPERLESS_ADMIN_PASSWORD=${PAPERLESS__ADMIN_PASSWORD}                      ### <--
       - PAPERLESS_DISABLE_AUTH=true                                                ### <--
-      - PAPERLESS_URL=https://${SUBDOMAIN}.${DOMAIN}                               ### <--
+      - PAPERLESS_URL=https://${SUBDOMAIN_3}.${DOMAIN}                               ### <--
     volumes:
       - /config/paperless:/usr/src/paperless/data                                  ### <--
       - /libraries/documents:/usr/src/paperless/media                              ### <--

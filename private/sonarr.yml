@@ -32,6 +32,8 @@ services:
 
 ###-- networking -------------------------------------------------------------------#--------------#
 
+    ports:
+      - ${SONARR_1080__PORT_EXT}:${SONARR_1080__PORT_INT}
     networks:
 #     - main
       - arr
@@ -70,6 +72,8 @@ services:
 
 ###-- networking -------------------------------------------------------------------#--------------#
 
+    ports:
+      - ${SONARR_2160__PORT_EXT}:${SONARR_2160__PORT_INT}
     networks:
 #     - main
       - arr
@@ -108,6 +112,8 @@ services:
 
 ###-- networking -------------------------------------------------------------------#--------------#
 
+    ports:
+      - ${SONARR_ANIME__PORT_EXT}:${SONARR_ANIME__PORT_INT}
     networks:
 #     - main
       - arr

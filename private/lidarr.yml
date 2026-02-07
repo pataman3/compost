@@ -32,6 +32,8 @@ services:
 
 ###-- networking -------------------------------------------------------------------#--------------#
 
+    ports:
+      - ${LIDARR__PORT_EXT}:${LIDARR__PORT_INT}
     networks:
 #     - main
       - arr

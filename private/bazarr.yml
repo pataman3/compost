@@ -30,6 +30,8 @@ services:
 
 ###-- networking -------------------------------------------------------------------#--------------#
 
+    ports:
+      - ${BAZARR__PORT_EXT}:${BAZARR__PORT_INT}
     networks:
 #     - main
       - arr

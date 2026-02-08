@@ -5,6 +5,7 @@ source _private.env
 services=(
   bazarr
   filebrowser
+  fladder
   jellyseerr
   lidarr
   paperless

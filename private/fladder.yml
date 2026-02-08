@@ -1,0 +1,42 @@
+services:
+
+#####-------------------------------------------------------------------------------#--------------#
+#####-- fladder --------------------------------------------------------------------#--------------#
+#####-------------------------------------------------------------------------------#--------------#
+
+  fladder:                                                                         ### <--
+    image: ghcr.io/donutware/fladder:latest                                        ### <--
+    container_name: ${SERVICE}
+    pull_policy: always
+    restart: unless-stopped
+    labels:
+      #-- traefik ------------------------------------------------------------------#--------------#
+      - traefik.enable=true
+      - traefik.http.routers.${SERVICE}.entrypoints=websecure
+      - traefik.http.routers.${SERVICE}.middlewares=authelia
+      - traefik.http.routers.${SERVICE}.rule=Host(`${SUBDOMAIN}.${DOMAIN}`)
+      - traefik.http.routers.${SERVICE}.tls.certresolver=cloudflare
+      - traefik.http.services.${SERVICE}.loadbalancer.server.port=${SERVICE_PORT}
+    environment:
+      #-- docker -------------------------------------------------------------------#--------------#
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TIMEZONE}
+      #-- fladder ------------------------------------------------------------------#--------------#
+      - BASE_URL=https://${IP}:${SERVICE_PORT}                                     ### <--
+
+###-- networking -------------------------------------------------------------------#--------------#
+
+#   ports:
+#     - ${FLADDER__PORT_EXT}:${FLADDER__PORT_INT}                                   # debug
+    networks:
+#     - main
+      - arr
+
+networks:
+# main:
+#   name: main
+#   external: true
+  arr:
+    name: arr
+    external: true

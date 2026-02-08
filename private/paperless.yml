@@ -89,8 +89,8 @@ services:
 
 ###-- networking -------------------------------------------------------------------#--------------#
 
-#   ports:
-#     - ${PAPERLESS__PORT_EXT}:${PAPERLESS__PORT_INT}                               # debug
+    ports:
+      - ${PAPERLESS__PORT_EXT}:${PAPERLESS__PORT_INT}
     networks:
       - main
 #     - arr

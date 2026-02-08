@@ -31,8 +31,8 @@ services:
 
 ###-- networking -------------------------------------------------------------------#--------------#
 
-#   ports:
-#     - ${AUDIOBOOKSHELF__PORT_EXT}:${AUDIOBOOKSHELF__PORT_INT}                     # debug
+    ports:
+      - ${AUDIOBOOKSHELF__PORT_EXT}:${AUDIOBOOKSHELF__PORT_INT}
     networks:
       - main
 #     - arr

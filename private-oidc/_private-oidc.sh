@@ -6,6 +6,7 @@ services=(
   audiobookshelf
   homarr
   jellyfin
+  memos
   vikunja
 )
 

@@ -1,0 +1,95 @@
+services:
+
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    pull_policy: always
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+      - POSTGRES_USER=synapse
+      - POSTGRES_PASSWORD=synapsepassword
+      - POSTGRES_DB=synapse
+    volumes:
+      - /config/matrix/postgres/data:/var/lib/postgresql/data
+    networks:
+      - main
+
+  synapse:
+    image: matrixdotorg/synapse:latest
+    container_name: synapse
+    pull_policy: always
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    environment:
+      - TZ=America/New_York
+      # - SYNAPSE_UID=1000
+      # - SYNAPSE_GID=1000
+      - SYNAPSE_SERVER_NAME=matrix.${DOMAIN}
+      - SYNAPSE_REPORT_STATS=yes
+    volumes:
+      - /config/matrix/synapse:/data
+    #ports:
+    #  - 8008:8008   # HTTP API
+    #  - 8448:8448   # Federation TLS (optional if behind proxy)
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.synapse-client.rule=Host(`matrix.${DOMAIN}`)
+      - traefik.http.routers.synapse-client.entrypoints=websecure
+      - traefik.http.routers.synapse-client.tls.certresolver=cloudflare
+      - traefik.http.services.synapse-client.loadbalancer.server.port=8008
+      #- traefik.http.routers.synapse-federation.rule=Host(`matrix.${DOMAIN}`) && PathPrefix(`/_matrix/federation`)
+      #- traefik.http.routers.synapse-federation.entrypoints=websecure
+      #- traefik.http.routers.synapse-federation.tls.certresolver=cloudflare
+      #- traefik.http.services.synapse-federation.loadbalancer.server.port=8448
+    networks:
+      - main
+
+  coturn:
+    image: instrumentisto/coturn
+    container_name: coturn
+    pull_policy: always
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+    volumes:
+      - /config/matrix/coturn/turnserver.conf:/etc/coturn/turnserver.conf
+    ports:
+      - 3478:3478/udp
+      - 3478:3478/tcp
+      - 5349:5349/tcp
+      - 5349:5349/udp
+    networks:
+      - main
+
+  element:
+    image: vectorim/element-web:latest
+    container_name: element
+    pull_policy: always
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+    volumes:
+      - /config/matrix/element/config.json:/app/config.json
+    #ports:
+    #  - 8765:80   # Element Web UI
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.element.rule=Host(`chat.${DOMAIN}`)
+      - traefik.http.routers.element.entrypoints=websecure
+      - traefik.http.routers.element.tls.certresolver=cloudflare
+      - traefik.http.services.element.loadbalancer.server.port=80
+    networks:
+      - main
+
+networks:
+  main:
+    name: main
+    external: true

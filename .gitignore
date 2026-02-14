@@ -1,14 +1,5 @@
-# working dir
-.working
-
-# stack folders
-_idle/*/*/
-backend/*/
-backend-vpn/*/
-private/*/
-private-oidc/*/
-private-vpn/*/
-public/*/
+# secrets dir
+secrets
 
 # envvar files
 *.env

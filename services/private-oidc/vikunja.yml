@@ -1,0 +1,47 @@
+services:
+
+#####-------------------------------------------------------------------------------#--------------#
+#####-- vikunja --------------------------------------------------------------------#--------------#
+#####-------------------------------------------------------------------------------#--------------#
+
+  vikunja:                                                                         ### <--
+    image: vikunja/vikunja:latest                                                  ### <--
+    container_name: ${SERVICE}
+    pull_policy: always
+    restart: unless-stopped
+    labels:
+      #-- traefik ------------------------------------------------------------------#--------------#
+      - traefik.enable=true
+      - traefik.http.routers.${SERVICE}.entrypoints=websecure
+#     - traefik.http.routers.${SERVICE}.middlewares=authelia                        # oidc
+      - traefik.http.routers.${SERVICE}.rule=Host(`${SUBDOMAIN}.${DOMAIN}`)
+      - traefik.http.routers.${SERVICE}.tls.certresolver=cloudflare
+      - traefik.http.services.${SERVICE}.loadbalancer.server.port=${SERVICE_PORT}
+    environment:
+      #-- docker -------------------------------------------------------------------#--------------#
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TIMEZONE}
+      #-- vikunja ------------------------------------------------------------------#--------------#
+      - VIKUNJA_DATABASE_PATH=/db/vikunja.db                                       ### <--
+      # - VIKUNJA_SERVICE_JWTSECRET: <a super secure random secret>                ### <--
+      - VIKUNJA_SERVICE_PUBLICURL=https://${SUBDOMAIN}.${DOMAIN}/                  ### <--
+    volumes:
+      - /config/vikunja/db:/db                                                     ### <--
+      - /config/vikunja/files:/app/vikunja/files                                   ### <--
+
+###-- networking -------------------------------------------------------------------#--------------#
+
+#   ports:
+#     - ${VIKUNJA__PORT_EXT}:${VIKUNJA__PORT_INT}                                   # debug
+    networks:
+      - main
+#     - arr
+
+networks:
+  main:
+    name: main
+    external: true
+# arr:
+#   name: arr
+#   external: true

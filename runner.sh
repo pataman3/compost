@@ -5,7 +5,7 @@ BUCKET="$1"  # e.g. backend, private, public, etc.
 
 SERVICES_DIR="services/$BUCKET"
 SECRETS_DIR="secrets/$BUCKET"
-BUCKET_ENV="$SECRETS_DIR/bucket.env"
+BUCKET_ENV="$SECRETS_DIR/$BUCKET.env"
 
 [ -f "$BUCKET_ENV" ] && set -a && . "$BUCKET_ENV" && set +a
 
